@@ -1,0 +1,41 @@
+{
+  "brand_name": "Rainmaker Việt Nam",
+  "founder": "Hoàng Bá Tàu",
+  "main_products": [
+    "Hệ thống Marketing & Sales Tự động",
+    "Khóa học Business Automation",
+    "Coaching chiến lược 1-1",
+    "Vũ khí 100X Content AI"
+  ],
+  "target_audience": "Doanh nghiệp SME, Solopreneur, Chuyên gia (Coach, Consultant), những người đang 'tự làm thuê cho chính mình'.",
+  "unique_selling_proposition": "Nhân bản doanh thu & thương hiệu mà KHÔNG phải bán mạng làm việc. Tự động hóa hoàn toàn bằng AI và Phễu.",
+  "tone_of_voice": {
+    "style": "Quyết liệt, Thực chiến, Đi thẳng vào vấn đề (Staccato).",
+    "pronouns": "Tôi - Bạn",
+    "rules": [
+      "Không vòng vo, đâm thẳng vào nỗi đau kinh doanh.",
+      "Nghiêm cấm từ ngữ sáo rỗng, nịnh nọt ('dạ', 'vâng', 'xin chào các bạn').",
+      "Tập trung vào kết quả giải phóng sức lao động."
+    ],
+    "forbidden_words": [
+      "xin chào",
+      "chào các bạn",
+      "dạ vâng",
+      "em"
+    ]
+  },
+  "core_values": [
+    "Giải phóng sức lao động bằng công nghệ & AI",
+    "Xây dựng 1 sản phẩm cực mạnh duy nhất"
+  ],
+  "brand_identity": {
+    "fonts": {
+      "primary": "Inter",
+      "accent": "Playfair Display"
+    },
+    "colors": {
+      "accent": "#B6FF00"
+    },
+    "handle": "@rainmaker"
+  }
+}

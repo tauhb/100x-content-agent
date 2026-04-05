@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            width: 1080px; height: 1080px;
+            background-color: #050505;
+            color: #FFFFFF;
+            font-family: var(--brand-font-primary), sans-serif;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            box-sizing: border-box;
+            position: relative;
+        }
+        .card {
+            width: 900px;
+            height: 900px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 40px;
+            padding: 60px;
+            box-sizing: border-box;
+            position: relative;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+        }
+        .tag-wrap {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        .tag-hash {
+            background-color: var(--brand-accent);
+            color: #000;
+            font-size: 60px;
+            font-weight: 900;
+            padding: 5px 20px;
+            margin-right: 25px;
+            border-radius: 12px;
+        }
+        .tag-text {
+            font-size: 55px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+        }
+        .headline {
+            font-size: 40px;
+            font-weight: 400;
+            color: #E2E8F0;
+            margin-bottom: 60px;
+            line-height: 1.4;
+        }
+        .headline-highlight {
+            border-bottom: 5px solid var(--brand-accent);
+            font-weight: 700;
+            color: #FFFFFF;
+        }
+        
+        .graphic-area {
+            position: relative;
+            flex-grow: 1;
+        }
+        
+        .path-icon {
+            position: absolute;
+            left: 20px;
+            top: 60px;
+            width: 800px;
+            height: 400px;
+        }
+
+        .path-1-text {
+            position: absolute;
+            top: 0px;
+            right: 20px;
+            font-size: 32px;
+            font-weight: 500;
+            text-align: right;
+            line-height: 1.4;
+            max-width: 300px;
+        }
+        
+        .path-2-box {
+            position: absolute;
+            bottom: 40px;
+            right: 0px;
+            font-size: 32px;
+        }
+        
+        .path-2-title {
+            font-weight: 500;
+            margin-bottom: 20px;
+            color: #E2E8F0;
+        }
+        
+        ul {
+            margin: 0;
+            padding-left: 20px;
+            list-style-type: none;
+        }
+        li {
+            margin-bottom: 12px;
+            font-weight: 800;
+            font-size: 35px;
+            text-transform: uppercase;
+        }
+        li::before {
+            content: "•";
+            color: var(--brand-accent);
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+        
+        .footer-handle {
+            position: absolute;
+            bottom: -80px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 30px;
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        /* --- GLOBAL HIGHLIGHT OVERRIDES (vFINAL) --- */
+        span.highlight-text, .title span.highlight-text, .quote-text span.highlight-text, .headline span.highlight-text, .main-text span.highlight-text {
+            color: #FFFFFF !important;
+            background-color: var(--brand-accent) !important;
+            font-family: var(--brand-font-secondary), serif !important;
+            font-style: italic !important;
+            padding: 2px 10px !important;
+            border-radius: 8px !important;
+        }
+        i.highlight-italic {
+            color: var(--brand-accent) !important;
+            font-style: italic !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="tag-wrap">
+            <div class="tag-hash">#</div>
+            <div class="tag-text">{{tag}}</div>
+        </div>
+        
+        <div class="headline">
+            {{headline_start}} <span class="headline-highlight">{{headline_highlight}}</span> {{headline_end}}
+        </div>
+        
+        <div class="graphic-area">
+            <!-- SVG Mô phỏng ngã rẽ 3D Flat Design -->
+            <svg class="path-icon" viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Nhánh trên (Tối đục) -->
+                <path d="M150 120 L280 40" stroke="rgba(255,255,255,0.2)" stroke-width="40" stroke-linecap="butt"/>
+                <!-- Nhánh dưới (Tối đục) -->
+                <path d="M50 180 L150 120" stroke="rgba(255,255,255,0.2)" stroke-width="40" stroke-linecap="butt"/>
+                <path d="M150 120 L350 120" stroke="rgba(255,255,255,0.2)" stroke-width="40" stroke-linecap="butt"/>
+                
+                <!-- Mũi tên cong chạy từ dưới lên nhánh ngang theo màu nhấn -->
+                <path d="M90 170 Q140 140 250 110" stroke="var(--brand-accent)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                <!-- Đầu mũi tên -->
+                <path d="M230 100 L255 109 L240 125" stroke="var(--brand-accent)" stroke-width="8" stroke-linecap="round" fill="none"/>
+                
+                <!-- Icon Person -->
+                <circle cx="80" cy="110" r="12" stroke="#FFF" stroke-width="5" fill="none"/>
+                <path d="M75 125 C 75 125, 95 125, 90 145 C 85 165, 75 180, 75 180 M 90 145 C 95 165, 105 180, 105 180" stroke="#FFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M60 140 C 65 130, 85 130, 95 140" stroke="#FFF" stroke-width="5" stroke-linecap="round" fill="none"/>
+            </svg>
+            
+            <div class="path-1-text">
+                {{path_1_text}}
+            </div>
+            
+            <div class="path-2-box">
+                <div class="path-2-title">{{path_2_title}}</div>
+                <ul>
+                    {{path_2_items}}
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-handle footer-brand"></div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            width: 1080px; height: 1080px;
+            background-color: #000;
+            background-image: radial-gradient(circle at center, #1a1a1a, #000);
+            color: #FFFFFF;
+            font-family: var(--brand-font-primary), sans-serif;
+            display: flex; flex-direction: column;
+            justify-content: center;
+            padding: 80px; box-sizing: border-box;
+            position: relative;
+            text-align: center;
+        }
+        .header { margin-bottom: 40px; }
+        .headline {
+            font-size: 55px; 
+            font-weight: 800; 
+            color: #FFF; 
+            text-transform: uppercase;
+        }
+        .data-box {
+            margin: 40px 0;
+        }
+        .big-data {
+            font-size: 160px;
+            font-weight: 900;
+            color: var(--brand-accent);
+            font-family: var(--brand-font-secondary), serif;
+            line-height: 1;
+            text-shadow: 0 10px 30px rgba(182, 255, 0, 0.2);
+        }
+        .content-box {
+            font-size: 38px;
+            color: #CCC;
+            line-height: 1.6;
+            margin: 0 auto;
+            max-width: 800px;
+            font-weight: 500;
+        }
+        .footer-info {
+            position: absolute;
+            bottom: 60px;
+            left: 80px;
+            right: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 26px; color: #666; font-weight: 600;
+            border-top: 2px solid #333;
+            padding-top: 30px;
+        }
+        .author-handle::after { content: var(--brand-handle); }
+        .swipe {
+            color: var(--brand-accent);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="headline">{{headline}}</div>
+    </div>
+    
+    <div class="data-box">
+        <div class="big-data">{{bigData}}</div>
+    </div>
+    
+    <div class="content-box">
+        {{contentHtml}}
+    </div>
+    
+    <div class="footer-info">
+        <span class="author-handle"></span>
+        <span>{{pageInfo}}</span>
+        <span class="swipe">{{swipeText}}</span>
+    </div>
+</body>
+</html>

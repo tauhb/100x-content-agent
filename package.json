@@ -1,0 +1,31 @@
+{
+  "name": "100x-content-agent",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node -e \"const fs=require('fs'); if(!fs.existsSync('.env')) { fs.copyFileSync('.env.example','.env'); console.log('✅ Da tao file .env tu dong.'); }\" && cd scripts/reels_engine && npm install",
+    "reels": "node scripts/reels_engine.js",
+    "image": "node scripts/image_engine.js",
+    "carousel": "node scripts/carousel_engine.js",
+    "publish": "node scripts/publish_engine_pw.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@remotion/eslint-config-flat": "^4.0.440",
+    "apify-client": "^2.22.3",
+    "axios": "^1.13.6",
+    "dotenv": "^17.3.1",
+    "playwright": "^1.58.2",
+    "puppeteer": "^24.40.0",
+    "zod": "^4.3.6"
+  }
+}

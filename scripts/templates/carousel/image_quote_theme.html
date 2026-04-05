@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            width: 1080px; height: 1080px; /* Định dạng ảnh góc vuông (Square) như hình mẫu */
+            
+            /* Giả lập ảnh nền mờ đằng sau */
+            background-color: #1a1a1a; 
+            background-image: url('https://images.unsplash.com/photo-1518005020951-eccb494ad742?q=80&w=1080&auto=format&fit=crop'); /* Ảnh nền Nature thay thế */
+            background-size: cover;
+            background-position: center;
+            
+            color: #FFFFFF;
+            font-family: var(--brand-font-primary), sans-serif;
+            display: flex; flex-direction: column;
+            justify-content: flex-end; align-items: flex-start;
+            padding: 80px 100px; box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Hiệu ứng Đổ bóng dốc (Gradient Overlay) cực láng mịn như hình mẫu */
+        .overlay {
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 50%, #000000 100%);
+            z-index: 1;
+        }
+
+        .content-wrapper {
+            position: relative; z-index: 2;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        
+        .main-text {
+            /* Giữ chỗ cho {{content}} do Engine bắn vào */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        /* ----- CẤU TRÚC SAO CHÉP TỪ ẢNH (BÓC TÁCH VISION) ----- */
+        .tag {
+            background-color: var(--brand-accent);
+            color: #000000;
+            font-size: 38px;
+            font-weight: 900;
+            padding: 12px 25px;
+            display: inline-block;
+            margin-bottom: 15px; /* Khoảng cách sát với Title như hình */
+        }
+        .title {
+            font-size: 75px; /* Chữ "NHẬN DIỆN" to, rõ */
+            font-weight: 900;
+            text-transform: uppercase;
+            margin-bottom: 35px;
+            margin-top: 0;
+            line-height: 1.1;
+            text-wrap: balance;
+        }
+        .body-text {
+            font-size: 40px;
+            line-height: 1.4;
+            font-weight: 500;
+            color: #F0F0F0;
+            margin-bottom: 35px;
+            text-wrap: balance;
+        }
+        .highlight {
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 1.4;
+            color: var(--brand-accent);
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            text-wrap: balance;
+        }
+        .footer-brand {
+            font-size: 32px;
+            color: #666666; /* Chữ brand xám mờ như "@huanyoutube" */
+            font-weight: 500;
+            margin-top: 20px;
+        }
+
+        /* Phần Footer cho Engine đếm trang */
+        .engine-footer {
+            position: absolute; bottom: 60px; right: 100px;
+            display: flex; justify-content: flex-end; align-items: center;
+            font-size: 28px; font-weight: 500; color: #888888;
+            z-index: 2;
+            gap: 20px;
+        }
+        .swipe { color: var(--brand-accent); font-weight: 700; }
+        /* --- GLOBAL HIGHLIGHT OVERRIDES (vFINAL) --- */
+        span.highlight-text, .title span.highlight-text, .quote-text span.highlight-text, .headline span.highlight-text, .main-text span.highlight-text {
+            color: #FFFFFF !important;
+            background-color: var(--brand-accent) !important;
+            font-family: var(--brand-font-secondary), serif !important;
+            font-style: italic !important;
+            padding: 2px 10px !important;
+            border-radius: 8px !important;
+        }
+        i.highlight-italic {
+            color: var(--brand-accent) !important;
+            font-style: italic !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div> <!-- Lớp phủ đen giả lập bóng tối -->
+    
+    <div class="content-wrapper">
+        <div class="main-text">
+            <!-- Thay định dạng khối thay vì trút Text thô -->
+            {{content}}
+            <!-- Ví dụ Engine sẽ bơm vào:
+                <div class="tag">#Bước 1</div>
+                <div class="title">NHẬN DIỆN</div>
+                <div class="body-text">Khi ở "vùng trũng" (dưới 200Hz)...</div>
+                <div class="highlight">👉 Không thể dư dả...</div>
+            -->
+        </div>
+        </div>
+        <div class="footer-brand"></div>
+    </div>
+    
+    <div class="engine-footer">
+        <span>{{pageInfo}}</span>
+        <span class="swipe">{{swipeText}}</span>
+    </div>
+</body>
+</html>

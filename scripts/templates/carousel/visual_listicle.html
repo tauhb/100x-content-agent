@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0; padding: 0;
+            width: 1080px; height: 1080px;
+            background-color: #111111;
+            color: #FFFFFF;
+            font-family: var(--brand-font-primary), sans-serif;
+            display: flex; flex-direction: column;
+            justify-content: center;
+            padding: 100px; box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+        .huge-number {
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            font-size: 800px;
+            font-weight: 900;
+            font-family: var(--brand-font-secondary), serif;
+            color: var(--brand-accent);
+            opacity: 0.15;
+            line-height: 1;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+        }
+        .headline {
+            font-size: 70px;
+            font-weight: 900;
+            color: var(--brand-accent);
+            line-height: 1.2;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+        .content-box {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .listicle-point {
+            font-size: 42px;
+            color: #E2E8F0;
+            line-height: 1.6;
+            margin: 0;
+            font-weight: 500;
+        }
+        .footer-info {
+            position: absolute;
+            bottom: 60px;
+            left: 100px;
+            right: 100px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 28px; color: #888; font-weight: 600;
+            z-index: 1;
+        }
+        .author-handle::after { content: var(--brand-handle); }
+        .swipe {
+            color: var(--brand-accent);
+        }
+        .celeb-avatar-bg {
+            position: absolute;
+            top: 0; right: 0; bottom: 0;
+            width: 50%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0.3;
+            z-index: 0;
+            border-left: 2px solid var(--brand-accent);
+            mask-image: linear-gradient(to right, transparent, black);
+            -webkit-mask-image: linear-gradient(to right, transparent, black);
+        }
+    </style>
+</head>
+<body>
+    {{hookImageBase64}}
+    <div class="huge-number">{{hugeNumber}}</div>
+    
+    <div class="content-wrapper">
+        <div class="headline">{{headline}}</div>
+        
+        <div class="content-box">
+            {{contentHtml}}
+        </div>
+    </div>
+    
+    <div class="footer-info">
+        <span class="author-handle"></span>
+        <span>{{pageInfo}}</span>
+        <span class="swipe">{{swipeText}}</span>
+    </div>
+</body>
+</html>

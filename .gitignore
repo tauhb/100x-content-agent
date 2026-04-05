@@ -1,0 +1,10 @@
+node_modules/
+.DS_Store
+.env
+browser_data/
+
+media_output/*
+!media_output/.gitkeep
+media-input/*
+!media-input/.gitkeep
+*.log
