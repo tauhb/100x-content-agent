@@ -4,6 +4,9 @@ description: Lệnh kích hoạt Đặc nhiệm Video Ngắn KHÔNG THOẠI (B-R
 
 # Lệnh: /tao_video_broll
 
+> [!IMPORTANT]
+> **ANTI-PLANNING DIRECTIVE:** Đây là một chuỗi hành động Tự Động (Automation) tuyến tính. AI bắt buộc thực thi ngay lập tức qua Run Command, tuyệt đối KHÔNG ĐƯỢC vào chế độ Planning Mode và KHÔNG TẠO/SỬA file Implementation Plan. Không yêu cầu người dùng xác nhận kế hoạch.
+
 **Mục tiêu:** Trao quyền cho Quản trị viên kích hoạt định dạng Cực Phẩm B-Roll Loop Viral. Tại quy trình này, Hệ thống từ chối quyền thuyết minh giọng đọc (Voice Text) của Máy chủ ngôn ngữ. AI sẽ tổng hợp và chọn ra một Thước phim nền B-Roll chất lượng xuất sắc, treo 1 câu Hook đè thẳng lên phông chiếu và tạo hiệu ứng nhịp độ không lời thoại kéo dài 8 giây. Người xem sẽ bị nén ở lại Video để tra cứu thêm tài liệu chuyên sâu thuộc phân đoạn Caption thực tế.
 
 ## 🔀 Quy trình Thực thi Hệ thống
