@@ -3,8 +3,14 @@ node_modules/
 .env
 browser_data/
 
-media_output/*
+media_output/**
+!media_output/**/
+!media_output/**/.gitkeep
 !media_output/.gitkeep
-media-input/*
+
+media-input/**
+!media-input/**/
+!media-input/**/.gitkeep
 !media-input/.gitkeep
+
 *.log
