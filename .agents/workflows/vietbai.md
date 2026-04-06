@@ -4,6 +4,9 @@ description: Lệnh kích hoạt Trợ lý Sáng tạo Nhãn quan (Brain) - Chuy
 
 # Lệnh: /vietbai
 
+> [!IMPORTANT]
+> **ANTI-PLANNING DIRECTIVE:** Đây là một chuỗi hành động Tự Động (Automation) tuyến tính. AI bắt buộc thực thi ngay lập tức qua Run Command / Viết File, tuyệt đối KHÔNG ĐƯỢC vào chế độ Planning Mode và KHÔNG TẠO/SỬA file Implementation Plan. Không yêu cầu người dùng xác nhận kế hoạch.
+
 **Mục tiêu (V3 Specialist):** Kích hoạt hệ sinh thái làm việc của Trợ lý Biên Tập nội dung nhằm phát triển nền móng cấu trúc cho **Master Content** (Nội dung Nguồn). Được định vị như Lõi Dữ Liệu Tối Cao của quy trình vòng lặp bao gồm toàn bộ Hệ giá trị Insight, Thông tin Fact, và dữ kiện Phát triển Câu Chuyện. Đầu ra này sẽ được tái xử dụng trên toàn bộ mảng Hình/Slide/Phim động (Image/Carousel/Reels) của hệ hệ sinh thái để loại bỏ nguy cơ chênh lệch định hướng ngôn ngữ (Tone).
 
 > ⚠️ **LUẬT THÉP KHÔNG GIA TĂNG TỆP RÁC (ZERO-GARBAGE):**
