@@ -27,4 +27,11 @@ node scripts/html_infographic_engine.js --path "media_output/[YYYY-MM-DD]/[Kênh
 ```
 Hệ thống Puppeteer tự động xử lý thiết kế và lưu trữ tại cùng địa chỉ với tên hiển thị là `media.png`.
 
+## 📤 Báo cáo Sau Cùng
+Đưa ra thông báo sau khi hoàn thiện với cấu trúc hiển thị đường dẫn rõ ràng để người dùng click:
+- Nội dung bài viết: [caption.txt](đường/dẫn/tuyệt/đối)
+- Link media: [media](đường/dẫn/tuyệt/đối)
+
+Đề xuất Quản trị viên Gọi lệnh `/publish` để hệ thống kết nối đăng lên Facebook!
+
 // turbo-all
