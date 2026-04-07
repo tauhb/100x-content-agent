@@ -24,13 +24,13 @@ export const MultiSceneDarkTemplate: React.FC<{ scene: any }> = ({ scene }) => {
             {/* Lớp Nền Động B-Roll */}
             {scene.bg_video && (
                 <AbsoluteFill>
-                    <OffthreadVideo src={staticFile(scene.bg_video)} style={{ objectFit: 'cover', width: '100%', height: '100%' }} muted={true} />
+                    <OffthreadVideo src={scene.bg_video.match(/^(http|file):\/\//) ? scene.bg_video : staticFile(scene.bg_video)} style={{ objectFit: 'cover', width: '100%', height: '100%' }} muted={true} />
                 </AbsoluteFill>
             )}
             <AbsoluteFill style={{ backgroundColor: `rgba(0,0,0,${fadeOverlay})`, zIndex: 0 }} />
-            
+
             {/* Lớp Âm Thanh: Giọng đọc AI to */}
-            {scene.voice_audio && <Audio src={staticFile(scene.voice_audio)} volume={1.0} />}
+            {scene.voice_audio && <Audio src={scene.voice_audio.match(/^(http|file):\/\//) ? scene.voice_audio : staticFile(scene.voice_audio)} volume={1.0} />}
 
             {/* Bộ định tuyến Da (Layout Skin Router) */}
             {layoutSkin === 'title_hook' && <SingleTitleHook content={scene.visual_content} />}

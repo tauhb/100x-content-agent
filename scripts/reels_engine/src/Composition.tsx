@@ -27,7 +27,7 @@ export const MainComposition = ({ timeline }: { timeline: any[] }) => {
     return (
         <AbsoluteFill style={{ backgroundColor: '#000000', color: 'white', fontFamily: `"${brandConfig.brand_identity?.fonts?.primary || 'Inter'}", sans-serif` }}>
             {/* NHẠC NỀN XUYÊN SUỐT TOÀN VIDEO */}
-            {timeline[0]?.bg_music && <Audio src={staticFile(timeline[0].bg_music)} volume={0.35} />}
+            {timeline[0]?.bg_music && <Audio src={timeline[0].bg_music.startsWith('http') || timeline[0].bg_music.startsWith('file://') ? timeline[0].bg_music : staticFile(timeline[0].bg_music)} volume={0.35} />}
 
             {scenesWithFrames.map((scene, i) => {
                 return (
@@ -39,7 +39,7 @@ export const MainComposition = ({ timeline }: { timeline: any[] }) => {
                         {/* ======================================= */}
                         {/* ROUTER: CHỈ ĐẠO TEMPLATE TỪ THƯ MỤC NGOÀI */}
                         {/* ======================================= */}
-                        
+
                         {scene.template_core === 'single_scene_dark' && (
                             <SingleSceneTemplate scene={scene} />
                         )}
@@ -66,10 +66,10 @@ export const MainComposition = ({ timeline }: { timeline: any[] }) => {
             {/* LỚP PHỦ ĐỈNH (GLOBAL BRAND WATERMARK): HIỆN DIỆN MỌI FRAME */}
             {/* ========================================================= */}
             {watermark && watermark.enabled && (
-                <AbsoluteFill style={{ 
-                    justifyContent: 'flex-end', 
-                    alignItems: 'center', 
-                    paddingBottom: watermark.bottom_margin || '80px', 
+                <AbsoluteFill style={{
+                    justifyContent: 'flex-end',
+                    alignItems: 'center',
+                    paddingBottom: watermark.bottom_margin || '80px',
                     zIndex: 9999,
                     pointerEvents: 'none'
                 }}>

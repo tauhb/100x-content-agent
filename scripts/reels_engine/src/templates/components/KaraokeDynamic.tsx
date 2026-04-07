@@ -25,13 +25,13 @@ export const KaraokeDynamic: React.FC<{ karaokeFile: string; brandAccent?: strin
     useEffect(() => {
         fetch(staticFile(karaokeFile))
             .then(res => res.json())
-            .then(json => { 
-                setData(json); 
-                continueRender(handle); 
+            .then(json => {
+                setData(json);
+                continueRender(handle);
             })
-            .catch(err => { 
-                console.error("[Karaoke] Lỗi nạp phụ đề:", err); 
-                continueRender(handle); 
+            .catch(err => {
+                console.error("[Karaoke] Lỗi nạp phụ đề:", err);
+                continueRender(handle);
             });
     }, [karaokeFile, handle]);
 
@@ -71,7 +71,7 @@ export const KaraokeDynamic: React.FC<{ karaokeFile: string; brandAccent?: strin
         for (let i = 0; i < words.length; i++) {
             currentLine.push(words[i]);
             const isPunctuation = /[.,!?]/.test(words[i].word);
-            
+
             // Cắt dòng nếu dài hơn 6 từ HOẶC gặp dấu câu HOẶC là từ cuối cùng
             if (currentLine.length >= 6 || isPunctuation || i === words.length - 1) {
                 _lines.push({
@@ -91,10 +91,10 @@ export const KaraokeDynamic: React.FC<{ karaokeFile: string; brandAccent?: strin
     if (!activeLine) return null;
 
     return (
-        <div style={{ 
-            position: 'absolute', 
+        <div style={{
+            position: 'absolute',
             bottom: 250, // Trọng tâm 1/3 dưới (Tránh đụng SingleTitleHook ở giữa màn hình)
-            width: '100%', 
+            width: '100%',
             textAlign: 'center',
             display: 'flex',
             flexWrap: 'wrap',
@@ -106,7 +106,7 @@ export const KaraokeDynamic: React.FC<{ karaokeFile: string; brandAccent?: strin
                 // Xác định Từ (Word) đang được Voiceover đọc tại Frame này
                 const isActive = currentTime >= w.start && currentTime <= w.end + 0.1;
                 const activeColor = brandAccent || '#B6FF00';
-                
+
                 return (
                     <span key={i} style={{
                         fontSize: isActive ? 50 : 42,

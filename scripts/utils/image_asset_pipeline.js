@@ -38,63 +38,73 @@ async function fetchAndSaveImage(keyword) {
     }
 }
 
+function removeVietnameseTones(str) {
+    str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+    str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+    // eslint-disable-next-line
+    str = str.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+    str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+    str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+    str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+    str = str.replace(/đ/g, "d");
+    str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+    str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+    str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+    str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ/g, "O");
+    str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+    str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+    str = str.replace(/Đ/g, "D");
+    return str;
+}
+
 // 3. Hàm Controller Cấp Cao: Quản lý chiến thuật săn ảnh
-async function getAssetForImageEngine(keyword) {
+async function getAssetForImageEngine(keyword, media_source) {
     if (!keyword) {
         console.log(`[Asset Pipeline] Không có Keyword, mặc định trả về ảnh Stock tối tăm vắng vẻ.`);
         return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
     }
+
+    const noAccentKeyword = removeVietnameseTones(keyword);
+    const cleanKeyword = noAccentKeyword.replace(/[^a-z0-9]/gi, '_').toLowerCase();
     
-    // Chiến thuật 1: Đi bưỡi trong kho rác nhà trước (Thư mục /media-input/personal_image)
-    const localDir = path.join(__dirname, '../../media-input/personal_image');
-    if (fs.existsSync(localDir)) {
-        const files = fs.readdirSync(localDir).filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i));
-        const exactMatches = files.filter(f => f.toLowerCase().includes(keyword.toLowerCase()));
+    // Nếu AI yêu cầu đích danh một thư mục:
+    let targetDir = '';
+    if (media_source === 'personal_image' || media_source === 'personal_library') {
+        targetDir = path.join(__dirname, '../../media-input/personal_image');
+    } else if (media_source === 'celebrity_vault' || media_source === 'celebrity_image') {
+        targetDir = path.join(__dirname, '../../media-input/celebrity_image');
+    } else if (media_source === 'image_stock') {
+        targetDir = path.join(__dirname, '../../media-input/image_stock');
+    } else {
+        // Fallback for old payloads
+        targetDir = path.join(__dirname, '../../media-input/image_stock');
+    }
+
+    // Quét Thư Mục Đích:
+    if (fs.existsSync(targetDir)) {
+        // TUYỆT ĐỐI KHÔNG BỐC NHẦM ẢNH HẠT GIỐNG (master_face) LÀM BACKGROUND
+        const vaultFiles = fs.readdirSync(targetDir).filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i) && !f.toLowerCase().includes('master'));
+        // Tìm file có chứa keyword, nếu không có lấy Random (Đảm bảo Antigravity đã đẻ sẵn vào đây rồi)
+        let matches = vaultFiles.filter(f => f.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(f.split('.')[0].toLowerCase()));
         
-        if (exactMatches.length > 0) {
-            const randomFile = exactMatches[Math.floor(Math.random() * exactMatches.length)];
-            console.log(`[Asset Pipeline] 🏠 Ồ, tìm thấy "hàng nhà trồng" khớp keyword luôn: ${randomFile}`);
-            return 'file://' + encodeURI(path.join(localDir, randomFile));
+        let selectedFile = '';
+        if (matches.length > 0) {
+            selectedFile = matches[Math.floor(Math.random() * matches.length)];
+            console.log(`[Asset Pipeline] 🎯 Tái sử dụng thành công Ảnh Caching: ${selectedFile} (Nguồn: ${media_source})`);
+        } else if (vaultFiles.length > 0) {
+            selectedFile = vaultFiles[Math.floor(Math.random() * vaultFiles.length)];
+            console.log(`[Asset Pipeline] 💡 Lấy tạm một hình bất kỳ trong kho rương ${media_source} do tìm không thấy đích danh.`);
+        }
+
+        if (selectedFile) {
+             // ĐÓNG ĐƯỜNG DẪN TUYỆT ĐỐI CHỐNG LỖI WINDOWS
+             const absolutePath = path.resolve(targetDir, selectedFile).replace(/\\/g, '/');
+             return 'file://' + encodeURI(absolutePath);
         }
     }
     
-    // YÊU CẦU MỚI TỪ SẾP: Nhận diện Người nổi tiếng / Danh nhân để gọi Vault
-    const CELEBRITIES = [
-        'jack ma', 'warren buffet', 'warren buffett', 'steve jobs', 'elon musk', 'naval ravikant', 'bill gates', 'mark zuckerberg',
-        'jeff bezos', 'robert kiyosaki', 't harv eker', 'tony robbins', 'napoleon hill', 'andrew carnegie', 'alex hormozi',
-        'charlie munger', 'ray dalio', 'sam altman', 'donald trump'
-    ];
-    
-    const isCelebrity = CELEBRITIES.some(celeb => keyword.toLowerCase().includes(celeb));
-    const forceAI = keyword.toLowerCase().startsWith('ai:');
-    
-    if (isCelebrity || forceAI) {
-        const cleanKeyword = (forceAI ? keyword.slice(3).trim() : keyword).replace(/[^a-z0-9]/gi, '_').toLowerCase();
-        
-        // Kiểm tra trong thư mục Celebrity Vault trước
-        const celebVaultDir = path.join(__dirname, '../../media-input/celebrity_image');
-        if (fs.existsSync(celebVaultDir)) {
-            const vaultFiles = fs.readdirSync(celebVaultDir).filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i));
-            // Tìm file có chứa tên
-            const matches = vaultFiles.filter(f => f.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(f.split('.')[0].toLowerCase()));
-            
-            if (matches.length > 0) {
-                const vaultFile = matches[Math.floor(Math.random() * matches.length)];
-                console.log(`[Asset Pipeline] 💡 Phát hiện danh nhân (${keyword}). Đã chốt thẻ ảnh từ Kho Antigravity Vault: ${vaultFile}!`);
-                return 'file://' + encodeURI(path.join(celebVaultDir, vaultFile));
-            }
-        }
-        console.log(`[Asset Pipeline] ⚠️ Thư viện Vault chưa có ảnh của Danh nhân này (${keyword}). Bạn bảo Antigravity vẽ 1 tấm bổ sung nhé! Rẽ nhánh về cào mạng...`);
-    }
-    
-    // Chiến thuật mạng: Ở nhà không có, Vault không có thì xách đao ra mạng (Browser Scraper)
-    const internetFile = await fetchAndSaveImage(keyword);
-    if (internetFile) {
-        return internetFile; // File:// path đã tải xong 
-    }
-    
-    // Chiến thuật 3: Bất lực toàn tập thì múc ảnh bừa trên Unsplash cho nó đỡ vỡ layout
-    console.log(`[Asset Pipeline] 🏳️ Đầu hàng, không cào được. Mượn tạm Unsplash vậy.`);
+    // Chiến thuật cuối cùng: Rớt đài mọi phòng ban!
+    console.log(`[Asset Pipeline] 🚨 Báo Động! Thư mục ${media_source} trống trơn và AI quên chưa Auto-Generate! Mượn tạm Unsplash Backup.`);
     return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
 }
 

@@ -14,3 +14,8 @@ media-input/**
 !media-input/.gitkeep
 
 *.log
+debug_*.txt
+error*.txt
+draft_*.txt
+draft_*.html
+disabled_workflows/

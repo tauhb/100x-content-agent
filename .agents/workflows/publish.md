@@ -11,8 +11,8 @@ Tuyệt đối KHÔNG đăng xuất mã phân quyền nền tảng (Cookies) san
 
 ## ⚙️ QUY TẮC NGỮ CẢNH TỰ ĐỘNG (CONTEXT-AWARE RULE)
 Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thống thực hiện theo thứ tự ưu tiên:
-1. **Ưu tiên 1:** Sử dụng Ticket vừa được kết xuất/phê duyệt trong phiên hội thoại hiện tại.
-2. **Ưu tiên 2:** Truy xuất `database/ideation_pipeline.json`, lấy Ticket có trạng thái `pending_publish`.
+1. **Ưu tiên 1:** Sử dụng Post ID vừa được kết xuất/phê duyệt trong phiên hội thoại hiện tại.
+2. **Ưu tiên 2:** Truy xuất `database/post_inventory.json`, lấy dự án có trạng thái `pending_publish`.
 3. **Ưu tiên 3:** Nếu cả 2 nguồn trên đều trống, hỏi lại Quản trị viên.
 
 ---
@@ -20,8 +20,8 @@ Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thốn
 ## 🔀 Quy trình Thực thi
 
 ### Bước 1: Khởi động Động cơ Phát hành (Auto-Publisher Engine)
-- Rà soát các dự án trong `database/ideation_pipeline.json` đang hiển thị trạng thái `pending_publish`.
-- Hệ thống thi hành mã chạy ngầm tự khởi tạo: `npm run publish -- "[Ticket_ID]"`.
+- Rà soát các dự án trong Kho Thành phẩm `database/post_inventory.json` đang hiển thị trạng thái `pending_publish`.
+- Hệ thống thi hành mã chạy ngầm tự khởi tạo: `npm run publish -- "[Post_ID]"` (Lưu ý ID lúc này sẽ phụ thuộc vào mảng `post_id` trong file json).
 - *(Chú thích hệ thống: Cấu trúc Node.JS chịu trách nhiệm xử lý luồng thao tác với Playwright Automation `scripts/publish_engine_pw.js` qua các Cổng Session bảo mật được lưu kho cục bộ)*.
 
 ### Bước 2: Kích hoạt Định dạng Truyền tải Nền Tảng (Cross-Channel Adapting)

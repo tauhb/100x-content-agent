@@ -6,3 +6,5 @@ dist
 # Ignore the output video from Git but not videos you import into src/.
 out
 media_output/
+public/media-input
+public/media-input/*

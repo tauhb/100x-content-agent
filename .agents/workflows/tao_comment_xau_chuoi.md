@@ -40,6 +40,9 @@ Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thốn
 ### Bước 3: Động cơ Kết xuất và Báo cáo
 🚨 **BẢO VỆ TIẾN TRÌNH ZERO-TOUCH:** HỆ THỐNG TUYỆT ĐỐI KHÔNG ĐƯỢC phép chạm vào file `ideation_pipeline.json` để thay đổi trạng thái hay nhồi nhét Payload. Mọi thao tác lưu trữ đã được uỷ quyền cho Node.js ở Bước 2. Viết xong là BÁO CÁO KẾT QUẢ LUÔN, TUYỆT ĐỐI KHÔNG dùng công cụ lẩn quẩn chỉnh sửa bồi thêm vào bất cứ file nào nữa để tránh bị Ứng dụng IDE kẹt lệnh (Trạng thái hỏi Review Changes)!
 
-Đưa ra thông báo nhắc nhở ngắn gọn trên màn hình chat: *"Phiên làm việc Phễu Bình luận đã xong, hãy dùng lệnh `/xem_output` để duyệt!"*
+Đưa ra thông báo nhắc nhở ngắn gọn trên màn hình chat với cấu trúc:
+- Nội dung bài viết: [caption.txt](đường/dẫn/tuyệt/đối/đến/file/caption_comments)
+- Link media: [(Các) file hình ảnh](đường/dẫn/tuyệt/đối)
 
+Nhắc nhở dùng `/publish` nếu ôn.
 // turbo-all

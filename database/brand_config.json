@@ -1,1 +1,21 @@
-{}
+{
+  "founder": "Hoàng Bá Tầu",
+  "brand_identity": {
+    "handle": "@rainmaker",
+    "colors": {
+      "accent": "#B6FF00"
+    },
+    "fonts": {
+      "primary": "Inter",
+      "accent": "Playfair Display"
+    },
+    "visual_vibe": "Cinematic lighting, high contrast, dark mode, sharp focus, professional and luxurious mood. Color palette predominantly dark.",
+    "watermark": {
+      "enabled": false,
+      "text": "100X",
+      "logo_url": "file:///path/to/logo.png",
+      "bottom_margin": "20px",
+      "opacity": 0.5
+    }
+  }
+}

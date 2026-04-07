@@ -1,1 +1,93 @@
-[]
+[
+  {
+    "id": "post_1892_tony_robbins",
+    "target_page": "facebook",
+    "bundle_path": "media_output/2026-04-06/facebook/post_1892_tony_robbins",
+    "format": "WAITING_FOR_COMMAND",
+    "status": "pending"
+  },
+  {
+    "id": "post_9824_jim_rohn",
+    "target_page": "Facebook",
+    "media_payload": {
+      "format": "reels",
+      "template_core": "multi_scene_dynamic",
+      "keyword": "Jim Rohn",
+      "script_segments": [
+        {
+          "duration": 6,
+          "video_source_override": "pexels",
+          "b_roll_keywords": [
+            "money",
+            "rich",
+            "chasing"
+          ],
+          "layout_skin": "title_hook",
+          "voice_text": "Càng mải miết đuổi theo tiền bạc, tiền bạc càng chạy xa khỏi bạn. Đó là luật hấp dẫn nghiệt ngã ở ngoài kia.",
+          "headline": "SỰ THẬT VỀ TIỀN BẠC"
+        },
+        {
+          "duration": 9,
+          "video_source_override": "local",
+          "b_roll_keywords": [
+            "speaking",
+            "explaining"
+          ],
+          "layout_skin": "podcast_wave",
+          "voice_text": "Jim Rohn từng nói một câu nện thẳng vào đầu tôi: Thu nhập hiếm khi nào vượt quá sự phát triển cá nhân của bạn. Dưới đây là 7 bài học sẽ mở khóa tư duy của bạn vĩnh viễn.",
+          "headline": "GÓC NHÌN CỦA TÁC GIẢ"
+        },
+        {
+          "duration": 8,
+          "video_source_override": "pexels",
+          "b_roll_keywords": [
+            "hard work",
+            "struggle"
+          ],
+          "layout_skin": "list_cascade",
+          "voice_text": "Thứ nhất, đừng ước mọi thứ dễ dàng hơn, hãy ước bạn giỏi giang hơn. Thứ hai, Tiền lương giúp bạn sống qua ngày, nhưng lợi nhuận mang lại gia tài.",
+          "headline": "QUY LUẬT THỊNH VƯỢNG",
+          "bullets": [
+            "1. Ước mình giỏi giang hơn",
+            "2. Lợi nhuận > Tiền lương"
+          ]
+        },
+        {
+          "duration": 9,
+          "video_source_override": "pexels",
+          "b_roll_keywords": [
+            "reading",
+            "studying late"
+          ],
+          "layout_skin": "tweet_overlay",
+          "voice_text": "Bài học số ba: Giáo dục chính quy giúp bạn kiếm sống, nhưng tự học giúp bạn làm giàu. Và số 4 là, kỷ luật chính là chiếc cầu nối giữa mục tiêu và thành tựu.",
+          "headline": "Jim Rohn Quote"
+        },
+        {
+          "duration": 9,
+          "video_source_override": "pexels",
+          "b_roll_keywords": [
+            "running",
+            "sport",
+            "habit"
+          ],
+          "layout_skin": "quote_box",
+          "voice_text": "Số năm, Động lực giúp bắt đầu, thói quen giúp tiếp tục. Số sáu, Thị trường đo giá trị bằng cống hiến, tuyệt đối không đo đếm trên mặt thời gian.",
+          "quote": "Thói quen chính là thứ giữ bạn ở lại đường đua.",
+          "author": "Bài học 5 & 6"
+        },
+        {
+          "duration": 8,
+          "video_source_override": "local",
+          "b_roll_keywords": [
+            "speaking",
+            "motivating"
+          ],
+          "layout_skin": "podcast_wave",
+          "voice_text": "Cuối cùng, Lời bào chữa là chiếc đinh phản bội đóng vào cỗ quan tài của thành công. Đừng phàn nàn, hãy chọn đứng lên giành lại quyền kiểm soát! Bình luận TU DUY để nhận Full Ebook triết lý Jim Rohn nhé!",
+          "headline": "LỰA CHỌN CỦA BẠN LÀ GÌ?"
+        }
+      ]
+    }
+  }
+]

@@ -15,27 +15,32 @@ description: Lệnh kích hoạt Đặc nhiệm Video Ngắn KHÔNG THOẠI (B-R
 - Quét các Gói dữ liệu (Bundle) đang ở trạng thái Chờ (Trực tiếp từ lệnh `/vietbai` trong phiên hội thoại hiện tại, hoặc dữ liệu trong tệp `database/ideation_pipeline.json` đang hiển thị trạng thái `WAITING_FOR_COMMAND` hoặc `MASTER_READY`).
 - Nhận diện và tải tệp `master_content.md` chứa nội hàm tri thức.
 
-### Bước 2: Khởi động Lệnh Đạo diễn Video Vô Ngôn (B-Roll Loop Specialist) 
+### Bước 2: Khởi động Đạo diễn Video Nhấp Nháy (HTML B-Roll Loop Specialist) 
 - Kích hoạt thuật toán tại mã nguồn: `skills/media/reels_broll_specialist.md` 
-- Hệ thống Trợ lý sẽ tiến hành bứt tách luồng thông tin:
-  1. Loại bỏ toàn bộ nỗ lực làm Kịch Bản Âm Thanh. Kéo duy nhất một câu Hook gây rúng động thả vào biến Layout JSON.
-  3. Ghi đè xuất 100% tài liệu văn bản gốc ra làm Caption. Chế tài kiểm duyệt Caption Doctor bắt buộc phải được thi hành.
+- Hệ thống Trợ lý sẽ bứt tách luồng thông tin:
+  1. Loại bỏ toàn bộ nỗ lực làm Kịch Bản Âm Thanh. Kéo 1 câu Hook gây rúng động, thả vào một cái `div` HTML. Trình bày Font chữ cực to (`.giant-hook`).
+  2. Xuất mã HTML thuần với nền `transparent`.
+  3. Ghi đè 100% tài liệu văn bản gốc ra Caption.
 
-- 🚨 **LUẬT CHỐNG CRASH IDE (BẮT BUỘC):** Để tránh lỗi "File not found", thao tác lưu file phải chia 2 nhịp:
-  - **Nhịp 1:** TẠO MỚI 2 file nháp ngay tại THƯ MỤC GỐC dự án, tên BẮT BUỘC CHỨA SỐ NGẪU NHIÊN (VD: `draft_caption_9912.txt` và `draft_payload_9912.json`). Ghi 100% nội dung Caption và Dữ liệu JSON vào 2 file này. (TUYỆT ĐỐI không ghi thẳng vào thư mục `reels/`).
+- 🚨 **LUẬT CHỐNG CRASH IDE (BẮT BUỘC):** Để tránh lỗi "File not found", thao tác lưu file chia 2 nhịp:
+  - **Nhịp 1:** TẠO MỚI 2 file nháp cực độc ngay TRONG THƯ MỤC ROOT dự án, sử dụng ĐUÔI SỐ CHỐNG TRÙNG LẶP (VD: `draft_caption_6628.txt` và `draft_broll_6628.html`).
   - **Nhịp 2:** Mở Terminal chạy lệnh Node dời 2 file nháp vào đúng vị trí:
     ```bash
-    node -e "const fs=require('fs'); const t='media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/reels'; fs.mkdirSync(t, {recursive:true}); fs.renameSync('[TÊN_FILE_CAPTION_NHÀP]', t+'/caption.txt'); fs.renameSync('[TÊN_FILE_JSON_NHÁP]', t+'/media_payload.json');"
+    node -e "const fs=require('fs'); const t='media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/reels'; fs.mkdirSync(t, {recursive:true}); fs.renameSync('[TÊN_FILE_CAPTION_NHÁP]', t+'/caption.txt'); fs.renameSync('[TÊN_FILE_HTML_NHÁP]', t+'/broll.html');"
     ```
     *(Thay đổi cấu trúc ngoặc vuông cho đúng thực tế)*
-  - **Nhịp 3 (ZERO-TOUCH):** Lệnh Terminal báo xong là Thành Công. TUYỆT ĐỐI KHÔNG dùng công cụ Đọc/Phân Tích file để mở lại thư mục đích nhằm kiểm tra. Đi tiếp luôn!
+  - **Nhịp 3 (ZERO-TOUCH):** Lệnh Terminal báo xong là Thành Công.
 
-### Bước 3: Động cơ Kết xuất Video (Trigger Rendering Engine)
-- Lưu thông số cài đặt JSON dạng Single_Scene (1 Phân đoạn) xuống biến `media_payload` trong kho lưu hành `database/ideation_pipeline.json`.
-- Hệ thống bắt đầu gọi tiến trình mã tự chạy: `npm run reels`.
-- *(Thiết bị Node.JS lúc này sẽ nạp JSON và xuất hiện báo cáo tương quan quy trình Trích Tải Video Nền, Quét thông số Giao diện rồi đổ ra bộ phần xuất chuẩn Media.mp4).*
+### Bước 3: Động cơ Kết xuất Video B-Roll (FFMPEG Engine)
+- Hệ thống bắt đầu gọi tiến trình mã tự chạy: 
+  ```bash
+  node scripts/html_broll_engine.js --path "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/reels/broll.html" --ticketId "[Ticket_ID]"
+  ```
+- *(Thiết bị Node.JS lúc này sẽ nạp HTML làm khung lưới Trong Suốt, quét Video nền MP4, ốp Nhạc MP3 và FFMPEG xuất bản 8 giây mp4).*
 
 ## 📤 Báo cáo Sau Cùng
-Đưa ra thông báo sau khi hoàn thiện: *"Lệnh chỉ huy Điều Hướng Đạo diễn 1 Cảnh B-Roll Loop đã dứt khoát hoàn tất! Một khung hình truyền thông mạnh mẽ với mức độ thu hút thị giác chuẩn Aesthetic được tạo thành, ép người dùng bị lôi tuột vào tệp Câu lệnh mô tả chi tiết tại Caption. Quản trị viên sử dụng lệnh chạy `/xem_output` để phê duyệt thành phẩm ngập tràn tương tác này!"*
+Đưa ra thông báo sau khi hoàn thiện với cấu trúc hiển thị đường dẫn rõ ràng để người dùng click:
+- Nội dung bài viết: [caption.txt](đường/dẫn/tuyệt/đối)
+- Link media: [media.mp4](đường/dẫn/tuyệt/đối)
 
-// turbo-all
+Đề xuất Quản trị viên Gọi lệnh `/publish` để hệ thống kết nối đăng lên Facebook!// turbo-all

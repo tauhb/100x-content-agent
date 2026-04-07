@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 async function launchBrowserContext(post) {
-    const channelId = post.channel || post.target_page || 'default';
+    const channelId = post.target_channels ? post.target_channels[0] : 'default';
     const userDataDir = path.join(__dirname, '../browser_data', channelId);
     console.log(`[System] Thư mục Session phân quyền: ${userDataDir}`);
     if (!fs.existsSync(userDataDir)) {
@@ -26,22 +26,23 @@ async function handleLoginWait(page, targetUrl) {
     }
 }
 
-async function markAsPublished(post, pipeline, pipelinePath, page) {
+async function markAsPublished(post, inventory, inventoryPath, page) {
     await new Promise(r => setTimeout(r, 10000));
     await page.screenshot({ path: path.join(__dirname, '../media_output/publish_pw_success.png') });
     console.log("📸 Đã chụp ảnh xác nhận tại media_output/publish_pw_success.png");
 
     post.status = "published";
-    post.published_at = new Date().toISOString();
-    fs.writeFileSync(pipelinePath, JSON.stringify(pipeline, null, 2));
-    console.log("✅ Cập nhật pipeline thành công.");
+    if (!post.published_data) post.published_data = {};
+    post.published_data.published_at = new Date().toISOString();
+    post.published_data.live_url = "Chờ đồng bộ API FB";
+    fs.writeFileSync(inventoryPath, JSON.stringify(inventory, null, 2));
+    console.log("✅ Cập nhật Kho Inventory thành công.");
 }
 
 async function getCaption(post) {
-    const formatName = post.media_payload?.format || ''; 
-    const captionPath = path.join(__dirname, '../', post.bundle_path || '', formatName, 'caption.txt');
+    const captionPath = post.caption_link ? path.join(__dirname, '..', post.caption_link) : '';
     let finalCaption = '';
-    if (fs.existsSync(captionPath)) {
+    if (captionPath && fs.existsSync(captionPath)) {
         finalCaption = fs.readFileSync(captionPath, 'utf8');
     } else {
         console.log(`⚠️ Không tìm thấy file caption tại: ${captionPath}`);
@@ -50,9 +51,9 @@ async function getCaption(post) {
 }
 
 // 1. ENGINE CHO REELS
-async function publishReelPlaywright(post, pipeline, pipelinePath) {
-    console.log(`🚀 [PLAYWRIGHT] KHỞI ĐỘNG TIẾN TRÌNH ĐĂNG REELS: ${post.id}`);
-    const videoPath = path.join(__dirname, '..', post.media_payload.output_path || "");
+async function publishReelPlaywright(post, inventory, inventoryPath) {
+    console.log(`🚀 [PLAYWRIGHT] KHỞI ĐỘNG TIẾN TRÌNH ĐĂNG REELS: ${post.post_id}`);
+    const videoPath = path.join(__dirname, '..', post.media_link || "");
     if (!fs.existsSync(videoPath)) {
         console.error(`❌ Video không tồn tại: ${videoPath}`); return;
     }
@@ -91,7 +92,7 @@ async function publishReelPlaywright(post, pipeline, pipelinePath) {
         await postBtn.click();
         console.log("🚀 [LIVE] Đã nhấn nút Đăng!");
 
-        await markAsPublished(post, pipeline, pipelinePath, page);
+        await markAsPublished(post, inventory, inventoryPath, page);
     } catch (error) {
         console.error(`❌ Lỗi Playwright: ${error.message}`);
         await page.screenshot({ path: path.join(__dirname, '../media_output/publish_pw_error.png') });
@@ -103,9 +104,9 @@ async function publishReelPlaywright(post, pipeline, pipelinePath) {
 }
 
 // 2. ENGINE CHO ẢNH (New Feature - Cross Format)
-async function publishImagePlaywright(post, pipeline, pipelinePath) {
-    console.log(`🚀 [PLAYWRIGHT] KHỞI ĐỘNG TIẾN TRÌNH ĐĂNG ẢNH: ${post.id}`);
-    const imagePath = path.join(__dirname, '..', post.media_payload.output_path || "");
+async function publishImagePlaywright(post, inventory, inventoryPath) {
+    console.log(`🚀 [PLAYWRIGHT] KHỞI ĐỘNG TIẾN TRÌNH ĐĂNG ẢNH: ${post.post_id}`);
+    const imagePath = path.join(__dirname, '..', post.media_link || "");
     if (!fs.existsSync(imagePath)) {
         console.error(`❌ Ảnh không tồn tại: ${imagePath}`); return;
     }
@@ -165,7 +166,7 @@ async function publishImagePlaywright(post, pipeline, pipelinePath) {
         await postBtn.click({ force: true });
         console.log("🚀 [LIVE] Đã nhấn nút Đăng xong!");
 
-        await markAsPublished(post, pipeline, pipelinePath, page);
+        await markAsPublished(post, inventory, inventoryPath, page);
     } catch (error) {
         console.error(`❌ Lỗi Playwright Profile Image: ${error.message}`);
         await page.screenshot({ path: path.join(__dirname, '../media_output/publish_pw_error.png') });
@@ -186,20 +187,23 @@ async function runAutoPublish() {
         return;
     }
 
-    const pipelinePath = path.join(__dirname, '../database/ideation_pipeline.json');
-    const pipeline = JSON.parse(fs.readFileSync(pipelinePath, 'utf8'));
-    const post = pipeline.find(p => p.id === postId);
+    const inventoryPath = path.join(__dirname, '../database/post_inventory.json');
+    if (!fs.existsSync(inventoryPath)) {
+        console.error("❌ database/post_inventory.json không tồn tại!"); return;
+    }
+    const inventory = JSON.parse(fs.readFileSync(inventoryPath, 'utf8'));
+    const post = inventory.find(p => p.post_id === postId);
 
     if (!post) {
-        console.error("❌ Không tìm thấy bài đăng trong pipeline hoặc đã phân phối xong!");
+        console.error("❌ Không tìm thấy bài đăng trong Inventory hoặc Id sai!");
         return;
     }
 
-    const format = post.media_payload?.format || 'reels';
-    if (format === 'reels') {
-        await publishReelPlaywright(post, pipeline, pipelinePath);
-    } else if (format === 'image' || format === 'carousel') {
-        await publishImagePlaywright(post, pipeline, pipelinePath);
+    const format = post.delivery_format || 'reels';
+    if (format === 'reels' || format === 'broll') {
+        await publishReelPlaywright(post, inventory, inventoryPath);
+    } else if (format === 'image' || format === 'carousel' || format === 'infographic') {
+        await publishImagePlaywright(post, inventory, inventoryPath);
     } else {
         console.log(`❌ Engine Publish chưa hỗ trợ định dạng: ${format}`);
     }
