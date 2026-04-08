@@ -13,8 +13,8 @@ import { SingleSplitCompare } from '../layouts/single_scene/SingleSplitCompare';
 export const SingleSceneTemplate: React.FC<{ scene: any }> = ({ scene }) => {
     const frame = useCurrentFrame();
 
-    // Mờ mờ Overlay (fade in black overlay)
-    const fadeOverlay = interpolate(frame, [0, 15], [0, 0.7], { extrapolateRight: 'clamp' });
+    // Overlay mờ phía trên video — giảm xuống 0.45 để video nền thấy rõ hơn
+    const fadeOverlay = interpolate(frame, [0, 15], [0, 0.45], { extrapolateRight: 'clamp' });
     // Đọc trường Layout Skin
     const layoutSkin = scene.layout_skin || 'title_hook';
 

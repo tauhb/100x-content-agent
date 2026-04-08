@@ -1,107 +1,105 @@
-# 🚀 100X Content Agent (White-Label V2)
+# 🚀 100X Content Agent
 
-**Hệ thống Tự Động Hóa Nội Dung Đa Kênh (Omnichannel Content Factory)**
+**Cỗ Máy Sản Xuất Nội Dung AI Tự Động — Từ Ý Tưởng Đến Đăng Bài, Zero-Touch**
 
-Chào mừng bạn đến với kỷ nguyên sản xuất media "Zero-Touch". 100X Content Agent là một cỗ máy AI toàn diện, giúp bạn biến một ý tưởng sơ khai thành các định dạng media chuyên nghiệp (Reels, Carousel, Image, Infographic) và tự động đăng tải lên các nền tảng mạng xã hội.
-
----
-
-## 🌟 Tính Năng Cốt Lõi
-
--   **Multi-Engine Rendering**:
-    -   🎬 **Reels Engine (Remotion)**: Tạo video ngắn với B-Roll, Voice-over AI và Subtitle Karaoke.
-    -   📸 **Image/Carousel Engine (Puppeteer)**: Thiết kế đồ họa Dynamic HTML với độ thẩm mỹ Premium.
-    -   📊 **Infographic Engine**: Tự động hóa thiết kế số liệu và kiến thức dạng dài.
--   **Cross-Platform Native**: Chạy mượt mà trên **Windows, macOS, và Linux** mà không cần Docker.
--   **Cloud Sync**: Đồng bộ hóa 2 chiều với Google Sheets để quản lý và kiểm duyệt từ xa.
--   **Auto-Publish**: Tự động đăng bài qua Playwright (Vượt rào cản API).
+Biến một chủ đề thành Video Reels, Carousel, Ảnh Quote, Infographic rồi tự động đăng lên Facebook — chỉ bằng một dòng lệnh chat.
 
 ---
 
-## 🛠 Yêu Cầu Hệ Thống
+## Tính Năng Cốt Lõi
 
-1.  **Node.js**: Phiên bản 18 trở lên.
-2.  **FFMPEG**: (Đã được tích hợp sẵn qua `ffmpeg-static`, không cần cài đặt thủ công).
-3.  **Browser**: Chromium (Tự động tải về qua Puppeteer/Playwright).
+- **Video Reels** — Remotion engine render video 60-90 giây với B-Roll, voiceover AI (ElevenLabs), kinetic typography, biểu đồ động
+- **Carousel / Ảnh / Infographic** — Puppeteer render HTML thành ảnh chất lượng cao
+- **Viết bài tự động** — Gemini AI viết Master Content 800-2000 từ theo Brand DNA
+- **Tự động đăng bài** — Playwright mô phỏng thao tác người dùng, đăng lên Facebook không cần API
+- **White-label** — Toàn bộ màu sắc, font, giọng thương hiệu cấu hình trong 1 file `brand_config.json`
+- **Cross-platform** — Chạy trên Windows 64-bit, macOS, Linux (không cần Docker)
 
 ---
 
-## 📥 Hướng Dẫn Cài Đặt (Đa Nền Tảng)
+## Yêu Cầu Hệ Thống
 
-Mở Terminal (hoặc CMD/PowerShell trên Windows) và chạy các lệnh sau:
+| Phần mềm | Phiên bản |
+| :--- | :--- |
+| Node.js | v18+ (khuyến nghị v20 LTS) |
+| Claude Code CLI | Mới nhất |
+| OS | Windows 10/11 **64-bit**, macOS 12+, Ubuntu 20.04+ |
 
-### 1. Clone Repository
+> ❌ **Windows 32-bit không được hỗ trợ** — Chromium, Remotion, Node.js 18+ đều yêu cầu 64-bit.
+
+---
+
+## Cài Đặt Nhanh
+
 ```bash
-git clone https://github.com/your-repo/100x-content-agent.git
-cd 100x-content-agent
-```
+# 1. Clone dự án
+git clone <repository-url> "100X Content Agent"
+cd "100X Content Agent"
 
-### 2. Cài Đặt & Cấu Hình Tự Động
-Lệnh này sẽ tự động cài đặt dependencies cho tất cả các engine và tạo file `.env` mẫu.
-```bash
+# 2. Cài dependencies (tự động tạo .env từ mẫu)
 npm install
-```
 
-### 3. Cấu Hình API
-Mở file `.env` và điền các Key cần thiết:
--   `ANTHROPIC_API_KEY`: Dành cho bộ não sáng tạo nội dung.
--   `PEXELS_API_KEY`: Dành cho kho video B-Roll.
--   `ELEVENLABS_API_KEY`: Dành cho giọng nói AI.
--   `GOOGLE_SHEET_APP_URL`: Dành cho Dashboard điều khiển.
+# 3. Cài Chromium cho tự động đăng bài
+npx playwright install chromium
 
----
+# 4. Điền API Keys vào file .env
+# Mở .env và điền: GEMINI_API_KEY, PEXELS_API_KEY, ELEVENLABS_API_KEY
 
-## 🚀 Hướng Dẫn Sử Dụng
-
-### Bước 1: Nghiên Cứu Ý Tưởng
-```bash
-/research_ideas
-```
-AI sẽ tự động cào dữ liệu Viral và đề xuất ma trận nội dung 5x5.
-
-### Bước 2: Viết Bài (Master Content)
-```bash
-/vietbai --topic "Mindset kinh doanh"
-```
-
-### Bước 3: Sản Xuất Media (Chọn 1 trong các lệnh)
--   **Tạo Video Reels**: `/tao_video_broll` (Dùng Remotion Engine).
--   **Tạo Carousel**: `/tao_carousel` (Dùng HTML Engine).
--   **Tạo Ảnh Đơn**: `/tao_anh` (Dùng Image Engine).
-
-### Bước 4: Đồng bộ & Hành động từ Sheet
-```bash
-/sheets_action
-```
-
-### Bước 5: Đăng Bài
-```bash
-/publish
+# 5. Mở Claude Code và chạy setup
+claude
+# Gõ: /setup
 ```
 
 ---
 
-## 📖 Tài Liệu Hướng Dẫn Chi Tiết
+## API Keys Cần Thiết
 
-Để biết cách thiết lập Google Sheets CMS và chi tiết cách vận hành từng bước, vui lòng xem:
-👉 **[HƯỚNG DẪN VẬN HÀNH & THIẾT LẬP (GUIDE.md)](docs/GUIDE.md)**
-
----
-
-## 📂 Cấu Trúc Thư Mục
-
--   `/database`: Chứa "Lake" dữ liệu và Pipeline sản xuất.
--   `/media-input`: Nơi bạn nạp Avatar, Logo, Nhạc nền và Video cá nhân.
--   `/media_output`: Thành phẩm sẽ được xuất xưởng tại đây theo ngày/kênh.
--   `/scripts`: Các cỗ máy Engine lõi.
--   `/skills`: Định nghĩa năng lực của AI Agent.
+| Key | Mục đích | Lấy ở đâu | Bắt buộc? |
+| :--- | :--- | :--- | :--- |
+| `GEMINI_API_KEY` | Viết nội dung tự động | [aistudio.google.com](https://aistudio.google.com) | Khuyến nghị |
+| `PEXELS_API_KEY` | Kho video B-Roll miễn phí | [pexels.com/api](https://www.pexels.com/api/) | Khuyến nghị |
+| `ELEVENLABS_API_KEY` | Giọng đọc AI cho video | [elevenlabs.io](https://elevenlabs.io) | Tùy chọn |
 
 ---
 
-## ⚖️ License
+## Bảng Lệnh
 
-Bản quyền thuộc về **100X Academy**. Sử dụng cho mục đích cá nhân và thương mại theo gói thuê bao.
+| Lệnh | Chức năng |
+| :--- | :--- |
+| `/setup` | Thiết lập lần đầu — Brand DNA, API Keys, cấu hình Facebook |
+| `/vietbai` | Viết Master Content từ ý tưởng |
+| `/research_ideas` | Tự động nghiên cứu ý tưởng viral |
+| `/tao_video` | Tạo video Reels 60-90 giây (B-Roll + voiceover AI) |
+| `/tao_anh` | Tạo ảnh quote/inspiration |
+| `/tao_carousel` | Tạo carousel 10 slide |
+| `/tao_infographic` | Tạo infographic |
+| `/publish` | Tự động đăng bài lên Facebook |
+| `/auto_mode` | Chế độ rảnh tay — chạy toàn bộ pipeline tự động |
 
 ---
 
-**Cỗ máy này được thiết kế để bạn rảnh tay. Chúc bạn bùng nổ nội dung! 🚀**
+## Cấu Trúc Thư Mục
+
+```
+100X Content Agent/
+├── .env                    ← API Keys (KHÔNG commit file này)
+├── database/
+│   ├── brand_config.json   ← Cấu hình thương hiệu (màu, font, tên)
+│   └── ideation_pipeline.json
+├── media-input/            ← Đặt media cá nhân vào đây
+│   ├── avatar.png
+│   ├── background-video/   ← Clip B-Roll (.mp4)
+│   └── background-music/   ← Nhạc nền (.mp3)
+├── media_output/           ← Thành phẩm tự động xuất ra đây
+└── scripts/                ← Các engine xử lý
+```
+
+---
+
+## Hướng Dẫn Chi Tiết
+
+Xem **[GUIDE.md](GUIDE.md)** để biết quy trình cài đặt từng bước, cách lấy API keys, xử lý lỗi thường gặp, và các mẹo vận hành nâng cao.
+
+---
+
+**Bản quyền © 100X Academy. Dùng cho mục đích cá nhân và thương mại theo gói thuê bao.**

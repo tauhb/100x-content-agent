@@ -50,7 +50,7 @@ async function renderBrollEngine(htmlPath) {
     if (fs.existsSync(brandConfigPath)) brandConfig = JSON.parse(fs.readFileSync(brandConfigPath, 'utf8'));
 
     const founderName = brandConfig.founder || 'System';
-    const brandHandle = brandConfig.brand_identity?.watermark?.text || '@100x_content';
+    const brandHandle = brandConfig.brand_identity?.handle || brandConfig.brand_identity?.watermark?.text || '@brand';
 
     // Xử lý nạp Avatar Base64 Thần tốc
     let avatarBase64 = 'https://dummyimage.com/200/333/fff&text=Avatar';

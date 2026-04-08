@@ -15,13 +15,28 @@ description: Lệnh kích hoạt Đặc nhiệm Slide (Carousel Specialist) - Ch
 - **NẾU CHƯA CÓ:** Tự động gọi Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.
 - **NẾU ĐÃ CÓ:** Tận dụng nội dung gốc.
 
-### Bước 1.5: Khám Xét Kho Ảnh (Asset Discovery) - TOKEN-FREE
+### Bước 1.5a: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
+Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau và ghi nhớ các giá trị thực:
+```bash
+cat database/brand_config.json
+```
+Trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `founder`
+- `BRAND_HANDLE` = `brand_identity.handle`
+- `ACCENT_COLOR` = `brand_identity.colors.accent`
+- `FONT_PRIMARY` = `brand_identity.fonts.primary`
+- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+
+> ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên.
+
+### Bước 1.5b: Khám Xét Kho Ảnh (Asset Discovery) - TOKEN-FREE
 Để thiết kế Slide Bìa (Slide 1) tối ưu nhất, Trợ lý **BẮT BUỘC** thực hiện lệnh liệt kê file:
 ```bash
 ls media-input/celebrity_image && ls media-input/personal_image
 ```
 - Nếu thấy tên file khớp với chủ đề bài -> **Ghi chú lại để dùng Layout Portrait-Fade (65/35) cho SLIDE 1.**
 - Nếu không thấy -> Dùng Layout Typography (`Centered-Flex`) cho Slide 1.
+- Ghi nhớ: Mọi chỗ cần hiển thị tên/handle thương hiệu trong slide, dùng đúng `FOUNDER_NAME` và `BRAND_HANDLE` từ Bước 1.5a.
 
 ### Bước 2: Phát Động Tối Cao Lệnh Tạo Carousel (Carousel Specialist)
 - Cập nhật Kỹ năng chuyên biệt: `skills/media/carousel_specialist.md`.

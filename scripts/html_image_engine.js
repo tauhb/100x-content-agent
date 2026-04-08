@@ -2,8 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { saveDeliverableAndPrunePipeline } = require('./utils/inventory_manager');
-const axios = require('axios');
-const { getAssetForImageEngine } = require('./utils/image_asset_pipeline');
+const { getAssetForImageEngine, resolveAssetToBase64 } = require('./utils/image_asset_pipeline');
 
 async function renderDynamicImage(inputHtmlPath) {
     if (!fs.existsSync(inputHtmlPath)) {
@@ -46,22 +45,8 @@ async function renderDynamicImage(inputHtmlPath) {
     for (const req of payload.imgRequests) {
         let base64Src = 'https://dummyimage.com/600x400/333/fff&text=Loading';
         try {
-            const assetUrl = await getAssetForImageEngine(req.keyword, req.vault);
-            if (assetUrl && assetUrl.startsWith('file://')) {
-                const localPath = decodeURI(assetUrl.slice(7));
-                const ext = path.extname(localPath).substring(1) || 'jpg';
-                const data = fs.readFileSync(localPath, 'base64');
-                base64Src = `data:image/${ext};base64,${data}`;
-            } else if (assetUrl && assetUrl.startsWith('http')) {
-                try {
-                    const response = await axios.get(assetUrl, { responseType: 'arraybuffer' });
-                    const contentType = response.headers['content-type'] || 'image/jpeg';
-                    const data = Buffer.from(response.data, 'binary').toString('base64');
-                    base64Src = `data:${contentType};base64,${data}`;
-                } catch (httpErr) {
-                    console.error('[Cảnh báo] Lỗi tải ảnh HTTP sang Base64:', httpErr.message);
-                }
-            }
+            const resolved = resolveAssetToBase64(await getAssetForImageEngine(req.keyword, req.vault));
+            if (resolved) base64Src = resolved;
         } catch(e) {
             console.log(`[Cảnh báo] Lỗi truy xuất ${req.vault} cho keyword "${req.keyword}"`);
         }

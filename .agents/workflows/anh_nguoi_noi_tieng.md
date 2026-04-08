@@ -3,7 +3,7 @@ description: Khởi động Xưởng Đúc Ảnh Danh Nhân - Đề xuất Danh 
 ---
 # Lệnh: /anh_nguoi_noi_tieng
 
-**Mục tiêu**: Lấp đầy rương `celebrity_vault` để phục vụ các bài viết trích dẫn. Máy dập bài sẽ lôi ảnh đúc sẵn ra dùng chứ không tìm trên mạng nữa.
+**Mục tiêu**: Lấp đầy kho `celebrity_image` để phục vụ các bài viết trích dẫn. Máy dập bài sẽ lôi ảnh đúc sẵn ra dùng chứ không tìm trên mạng nữa.
 
 ## Quy trình Thực thi
 
@@ -17,6 +17,6 @@ description: Khởi động Xưởng Đúc Ảnh Danh Nhân - Đề xuất Danh 
 - Vẽ **5 bức chân dung** có thần thái khác nhau cho nhân vật mà User chốt.
 
 ### Bước 3: Đánh Nhãn Lưu Kho (Zero-Error Naming)
-- Dời ảnh từ Artifacts về `media-input/celebrity_vault/`.
+- Dời ảnh từ Artifacts về `media-input/celebrity_image/`.
 - **Quy Tắc Tên File Tối Thượng:** Tiếng Việt / Tiếng Anh Không Dấu, chữ thường, cách nhau bằng gạch dưới, kèm số đếm. (Ví dụ: `elon_musk_doc_sach_1.jpg`).
 - Báo cáo xuất xưởng khi hoàn thành.

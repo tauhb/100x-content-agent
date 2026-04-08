@@ -62,6 +62,30 @@ function doGet(e) {
   const action = e.parameter.action;
   const ss = SpreadsheetApp.getActiveSpreadsheet();
   
+  if (action === "get_pending_ideas") {
+    const sheet = ss.getSheetByName(TAB_IDEA_HUB);
+    const data = sheet.getDataRange().getValues();
+    const limit = parseInt(e.parameter.limit) || 10;
+    const pending = [];
+    for (let i = 1; i < data.length; i++) {
+      if (data[i][8] === "📥 Hộp thư ý tưởng") {
+        pending.push({
+          row: i + 1,
+          id: data[i][0],
+          source: data[i][1],
+          content: data[i][2],
+          hook: data[i][3],
+          angle: data[i][4],
+          pillar: data[i][5],
+          funnel: data[i][6],
+          agent: data[i][7]
+        });
+        if (pending.length >= limit) break;
+      }
+    }
+    return ContentService.createTextOutput(JSON.stringify(pending)).setMimeType(ContentService.MimeType.JSON);
+  }
+
   if (action === "get_approved_ideas") {
     const sheet = ss.getSheetByName(TAB_IDEA_HUB);
     const data = sheet.getDataRange().getValues();

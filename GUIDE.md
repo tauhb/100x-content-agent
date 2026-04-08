@@ -1,93 +1,434 @@
-# 📖 CẨM NANG VẬN HÀNH: 100X CONTENT AGENT
+# 📖 HƯỚNG DẪN CÀI ĐẶT & VẬN HÀNH: 100X CONTENT AGENT
 
-> *"Tôi không xây kinh doanh để làm nô lệ cho mạng xã hội. Tôi uỷ quyền cho máy móc để mua lại tự do."*
-
-Chào mừng ngài đến với Cỗ máy **100X Content Agent** — Hệ thống Sản xuất & Phân phối Nội dung Điểm chạm Tối đa (Omnipoint) hoàn toàn Tự động. Tại đây, ngài không còn đóng vai trò là một "Thợ viết nội dung" hay "Thợ chỉnh video" nữa. Ngài nay đã thăng cấp thành **Nhà Điều Hành Hệ Thống (Master Operator)**.
-
-Việc của ngài là gõ lệnh và đưa ra Quyết định. Toàn bộ Trí tuệ vi mô, thiết kế đồ hoạ, lồng tiếng và nhấp chuột đăng bài... Cỗ máy này sẽ tự động thay ngài giải quyết tròn trịa.
+> Hệ thống sản xuất nội dung AI tự động hóa hoàn toàn — từ Ý tưởng đến Video/Ảnh/Slide đăng Facebook.
 
 ---
 
-## Chương 1: Cài đặt Thần Tốc (Setup Bằng Thần Chú)
+## MỤC LỤC
 
-Cỗ máy này hoạt động dựa trên linh hồn của AI **Antigravity** tích hợp ngay trong IDE (như Cursor). Ngài không cần biết Code, cũng chẳng cần động tay thiết lập lằng nhằng.
-
-### Cách Kích Hoạt Phép Thuật Lần Đầu
-Ngay sau khi ngài sao chép (Clone) bộ mã nguồn này về máy tính và mở nó lên bằng IDE Cursor, đừng vội hoang mang. Hãy mở khung **Chat Antigravity** lên, copy và dán **Nguyên Văn Câu Thần Chú Dưới Đây** vào đó:
-
-> *"Chào Antigravity, tôi là Quản trị viên mới. Ngay lập tức hãy giúp tôi cài đặt môi trường bằng lệnh `npm install`, đợi nó chạy xong thì hãy tự động gọi lệnh `/setup` để bắt đầu quy trình khai báo Brand DNA cho doanh nghiệp tôi nhé!"*
-
-🎯 Antigravity sẽ vâng lệnh ngài, tự động cài đặt mọi công cụ ngầm. Sau đó, nó sẽ từ tốn hỏi ngài 4 bước trắc nghiệm về Thương hiệu, Giọng văn, và thiết lập Facebook. Ngài chỉ việc chat trả lời như một cuộc phỏng vấn.
+1. [Yêu Cầu Hệ Thống](#1-yêu-cầu-hệ-thống)
+2. [Cài Đặt Môi Trường](#2-cài-đặt-môi-trường)
+3. [Cấu Hình API Keys](#3-cấu-hình-api-keys)
+4. [Cấu Hình Brand DNA](#4-cấu-hình-brand-dna)
+5. [Chuẩn Bị Media Đầu Vào](#5-chuẩn-bị-media-đầu-vào)
+6. [Chạy Thử Lần Đầu](#6-chạy-thử-lần-đầu)
+7. [Bảng Lệnh Đầy Đủ](#7-bảng-lệnh-đầy-đủ)
+8. [Quy Trình Tạo Video (tao_video)](#8-quy-trình-tạo-video-tao_video)
+9. [Xử Lý Lỗi Thường Gặp](#9-xử-lý-lỗi-thường-gặp)
+10. [Tương Thích Đa Nền Tảng](#10-tương-thích-đa-nền-tảng)
 
 ---
 
-## Chương 2: Bảng Điều Khiển Lệnh (The Workflows)
+## 1. Yêu Cầu Hệ Thống
 
-Bất cứ khi nào ngài muốn cỗ máy làm việc, hãy mở thanh chat Antigravity và gõ các Từ Khoá Lệnh (Workflows) sau:
+### Phần Mềm Bắt Buộc
 
-| Mã Lệnh | Chức Năng Cốt Lõi |
+| Phần mềm | Phiên bản tối thiểu | Tải về |
+| :--- | :--- | :--- |
+| **Node.js** | v18.0+ (khuyến nghị v20 LTS) | [nodejs.org](https://nodejs.org) |
+| **npm** | v9.0+ (đi kèm Node.js) | — |
+| **Git** | Bất kỳ | [git-scm.com](https://git-scm.com) |
+| **Claude Code CLI** | Mới nhất | `npm install -g @anthropic/claude-code` |
+
+> **Kiểm tra phiên bản hiện tại:**
+> ```bash
+> node --version   # phải >= v18.0.0
+> npm --version    # phải >= v9.0.0
+> ```
+
+### Phần Cứng Khuyến Nghị
+
+| Thành phần | Tối thiểu | Tốt nhất |
+| :--- | :--- | :--- |
+| RAM | 8 GB | 16 GB+ |
+| CPU | 4 nhân | 8 nhân+ |
+| Ổ cứng trống | 5 GB | 20 GB+ |
+| Kết nối Internet | 10 Mbps | 50 Mbps+ |
+
+### Hệ Điều Hành Được Hỗ Trợ
+
+- ✅ **macOS** 12+ (Monterey trở lên)
+- ✅ **Windows** 10/11 **(64-bit bắt buộc)**
+- ✅ **Ubuntu/Debian** 20.04+
+- ❌ **Windows 32-bit** — KHÔNG hỗ trợ (Node.js 18+, Playwright, Chromium, Remotion đều yêu cầu 64-bit)
+
+> **Kiểm tra máy của bạn:** Vào *Settings → System → About → System type*. Nếu thấy "64-bit operating system" thì dùng được. Nếu thấy "32-bit" thì cần giải pháp thay thế (xem [Tương Thích Đa Nền Tảng](#10-tương-thích-đa-nền-tảng)).
+
+---
+
+## 2. Cài Đặt Môi Trường
+
+### Bước 2.1 — Clone dự án về máy
+
+```bash
+git clone <repository-url> "100X Content Agent"
+cd "100X Content Agent"
+```
+
+### Bước 2.2 — Cài đặt dependencies gốc
+
+```bash
+npm install
+```
+
+> Lệnh này tự động:
+> - Cài tất cả thư viện Node.js (Playwright, Puppeteer, Axios, v.v.)
+> - Tạo file `.env` từ `.env.example` nếu chưa có
+> - Chạy `npm install` trong thư mục `scripts/reels_engine/` (Remotion)
+
+### Bước 2.3 — Cài đặt Remotion Engine riêng biệt (nếu bước trên bỏ sót)
+
+```bash
+cd scripts/reels_engine
+npm install
+cd ../..
+```
+
+### Bước 2.4 — Cài Playwright Browsers
+
+```bash
+npx playwright install chromium
+```
+
+> Playwright cần tải Chromium (~150 MB) để chạy tự động hóa đăng bài.
+
+---
+
+## 3. Cấu Hình API Keys
+
+### Bước 3.1 — Mở file `.env`
+
+File `.env` đã được tạo tự động ở thư mục gốc. Mở bằng bất kỳ text editor nào:
+
+- **Windows:** Notepad, VS Code, Notepad++
+- **macOS/Linux:** `nano .env` hoặc `code .env`
+
+### Bước 3.2 — Điền các API Key
+
+```env
+# 1. Khóa AI Viết Kịch Bản (Google Gemini)
+GEMINI_API_KEY="your_gemini_api_key_here"
+
+# 2. Khóa Kéo Video B-Roll từ Internet (Pexels)
+PEXELS_API_KEY="your_pexels_api_key_here"
+
+# 3. Khóa Giọng Đọc AI (ElevenLabs)
+ELEVENLABS_API_KEY="your_elevenlabs_api_key_here"
+
+# 3.1 ID Giọng Đọc ưa thích (tùy chọn, để trống = giọng mặc định)
+ELEVENLABS_VOICE_ID=""
+```
+
+### Hướng Dẫn Lấy API Key
+
+#### 🔑 Gemini API Key (MIỄN PHÍ)
+1. Truy cập [aistudio.google.com](https://aistudio.google.com)
+2. Đăng nhập bằng Google Account
+3. Click **Get API Key** → **Create API key**
+4. Copy key và dán vào `GEMINI_API_KEY`
+
+#### 🎥 Pexels API Key (MIỄN PHÍ)
+1. Đăng ký tài khoản tại [pexels.com/api](https://www.pexels.com/api/)
+2. Vào **Your API Key** trong tài khoản
+3. Copy key và dán vào `PEXELS_API_KEY`
+
+#### 🎙️ ElevenLabs API Key (Có gói Free)
+1. Đăng ký tại [elevenlabs.io](https://elevenlabs.io)
+2. Vào **Profile → API Keys**
+3. Click **Generate API Key**
+4. Copy key và dán vào `ELEVENLABS_API_KEY`
+5. (Tùy chọn) Vào **Voice Library**, chọn giọng muốn dùng, copy **Voice ID** dán vào `ELEVENLABS_VOICE_ID`
+
+> ⚠️ **Lưu ý:** Nếu không có ElevenLabs key, video vẫn tạo được nhưng **không có giọng đọc AI**. Hệ thống tự động bỏ qua bước lồng tiếng.
+
+---
+
+## 4. Cấu Hình Brand DNA
+
+File: `database/brand_config.json`
+
+```json
+{
+  "founder": "Tên Của Bạn",
+  "brand_identity": {
+    "handle": "@ten_trang_cua_ban",
+    "colors": {
+      "accent": "#B6FF00"
+    },
+    "fonts": {
+      "primary": "Inter",
+      "accent": "Playfair Display"
+    },
+    "visual_vibe": "Mô tả phong cách hình ảnh của bạn (dark mode, cinematic, v.v.)",
+    "watermark": {
+      "enabled": false,
+      "text": "TÊN THƯƠNG HIỆU",
+      "bottom_margin": "80px",
+      "opacity": 0.6
+    }
+  }
+}
+```
+
+### Các trường quan trọng
+
+| Trường | Ý nghĩa | Ví dụ |
+| :--- | :--- | :--- |
+| `founder` | Tên tác giả / người dùng | `"Nguyễn Văn A"` |
+| `handle` | Username mạng xã hội | `"@rainmaker_vn"` |
+| `colors.accent` | Màu nhấn mạnh thương hiệu (hex) | `"#B6FF00"` (neon xanh) |
+| `fonts.primary` | Font chữ chính | `"Inter"` |
+| `fonts.accent` | Font chữ tiêu đề | `"Playfair Display"` |
+| `visual_vibe` | Mô tả phong cách hình ảnh cho AI | `"Dark mode, high contrast..."` |
+| `watermark.enabled` | Bật/tắt logo watermark | `true` hoặc `false` |
+
+---
+
+## 5. Chuẩn Bị Media Đầu Vào
+
+Toàn bộ media cá nhân đặt trong thư mục `media-input/`:
+
+```
+media-input/
+├── avatar.png (hoặc avatar.jpg)       ← Ảnh avatar/headshot của bạn
+├── background-video/                  ← Video B-Roll cá nhân
+│   ├── clip_office_1.mp4
+│   ├── clip_talking_2.mp4
+│   └── ...
+├── background-music/                  ← Nhạc nền
+│   ├── lofi_beat_1.mp3
+│   ├── ambient_2.mp3
+│   └── ...
+├── image_stock/                       ← Ảnh minh họa tổng quát
+├── celebrity_image/                   ← Ảnh người nổi tiếng (nếu cần)
+└── personal_image/                    ← Ảnh cá nhân bổ sung
+```
+
+### Lưu ý quan trọng
+
+- **Video B-Roll:** Định dạng `.mp4` được ưu tiên. Độ phân giải khuyến nghị: 1080x1920 (dọc) hoặc 1920x1080 (ngang).
+- **Nhạc nền:** `.mp3` hoặc `.wav`. Đặt tên file chứa từ khóa thể loại (vd: `lofi_chill.mp3`, `epic_background.mp3`) để hệ thống tự chọn đúng vibe.
+- **Avatar:** Chỉ cần 1 file `avatar.png` hoặc `avatar.jpg` ở thư mục gốc `media-input/`.
+
+---
+
+## 6. Chạy Thử Lần Đầu
+
+### Test 1 — Kiểm tra hệ thống hoạt động
+
+Mở terminal trong thư mục dự án và gõ:
+
+```bash
+node -e "console.log('Node OK:', process.version)"
+```
+
+Kết quả mong đợi: `Node OK: v20.x.x`
+
+### Test 2 — Kiểm tra biến môi trường
+
+```bash
+node -e "require('dotenv').config(); console.log('Gemini Key:', process.env.GEMINI_API_KEY ? 'OK ✅' : 'THIẾU ❌')"
+```
+
+### Test 3 — Tạo video thử nghiệm (không cần API key)
+
+Mở Claude Code CLI và gõ:
+
+```
+tạo video cho tôi với chủ đề: 5 bí quyết thành công
+```
+
+Hệ thống sẽ:
+1. Dùng AI phân tích chủ đề
+2. Tạo kịch bản phân cảnh tự động
+3. Bốc nhạc nền từ `media-input/background-music/`
+4. Render video và lưu vào `media_output/YYYY-MM-DD/`
+
+---
+
+## 7. Bảng Lệnh Đầy Đủ
+
+Tất cả lệnh được gõ trực tiếp vào Claude Code CLI (chat):
+
+| Lệnh | Chức năng | Yêu cầu API |
+| :--- | :--- | :--- |
+| `tạo video [chủ đề]` | Tạo video Reels 45-90 giây | Pexels (tùy chọn), ElevenLabs (tùy chọn) |
+| `tạo ảnh [chủ đề]` | Tạo ảnh quote/inspiration | Pexels (tùy chọn) |
+| `tạo slide [chủ đề]` | Tạo carousel 10 slide | Pexels (tùy chọn) |
+| `tạo infographic [chủ đề]` | Tạo infographic | Pexels (tùy chọn) |
+| `viết bài [chủ đề]` | Viết Master Content | Gemini |
+| `nghiên cứu ý tưởng` | Tìm ý tưởng nội dung | Gemini |
+| `đăng bài` | Tự động đăng lên Facebook | Playwright (browser) |
+
+---
+
+## 8. Quy Trình Tạo Video (tao_video)
+
+Khi bạn gõ `tạo video với chủ đề: [X]`, hệ thống thực hiện:
+
+```
+1. AI phân tích chủ đề
+       ↓
+2. Video Director Specialist
+   tạo kịch bản phân cảnh JSON
+   (BROLL_HOOK, ARCH_SPLIT, KINETIC_COUNT, v.v.)
+       ↓
+3. Asset Pipeline
+   - Bốc video B-Roll local / Pexels
+   - Bốc nhạc nền local
+   - Tổng hợp giọng đọc (ElevenLabs, nếu có key)
+       ↓
+4. Remotion Renderer
+   - Micro-server port 9876 serve media qua HTTP
+   - Render từng frame thành video .mp4
+       ↓
+5. Lưu kết quả
+   media_output/YYYY-MM-DD/content/TICKET_ID/reels/media.mp4
+```
+
+### Cấu Trúc Archetype Layout (cho người dùng nâng cao)
+
+Khi muốn tùy chỉnh kịch bản video, bạn có thể chỉnh file `media_payload.json`:
+
+| Archetype | Mô tả |
 | :--- | :--- |
-| **`/research_ideas`** | 🕵️ **Điệp viên cào số liệu:** Kéo data từ đối thủ, phân tích Insight người dùng và tự đẻ ra kho Ý tưởng (Idea Bank). |
-| **`/vietbai`** | 🧠 **Bộ não Viết Lách:** Lấy ý tưởng từ kho, dùng tư duy Copywriter để phóng tác thành Bài viết Chuyên gia (Master Content). |
-| **`/tao_anh`** | 🎨 **Đặc nhiệm Thiết kế 2D:** Biến văn bản thành Hình ảnh Trích dẫn (Quotes) hoặc Layout Cảm hứng tuyệt đẹp. |
-| **`/tao_video`** | 🎬 **Đạo diễn Video Reels:** Tự động cắt gọt B-Rolls, lồng Tiếng nói AI (ElevenLabs) tạo thành đoạn Video Ngắn 60s TikTok/Reels xịn xò. |
-| **`/tao_slide`** | 🖼️ **Thiết kế Carousel:** Chuyển hóa bài học thành chuỗi Đồ họa 10 Slide cực nét để giáo dục khách hàng trên Facebook/LinkedIn. |
-| **`/xem_output`** | 👁️ **Phòng Trình Chiếu:** Kích hoạt giao diện để Admin duyệt lại chất lượng Ảnh/Video trước giờ G. |
-| **`/publish`** | 🚀 **Bệ Phóng Đăng Bài:** Đăng nhập Facebook ngầm và tự động tải File, tự điền Caption, tự bấm nút Đăng (Post Bypass). |
-| **`/auto_mode`** | 🤖 **Chuyên cơ Rảnh tay:** Nối tất cả các bước trên thành 1 Vòng Lặp. Chỉ cần gõ 1 lệnh, cỗ máy tự chạy từ Idea -> Đăng bài (Zero-Touch). |
-
-### 👑 Trạng Thái Quyền Lực Nhất: `/auto_mode` (Tổng Giám Đốc)
-Đáng chú ý nhất trong Bảng lệnh trên là **`/auto_mode`**. Khi ngài gõ lệnh này, AI sẽ thoát khỏi vai trò công nhân để đội mũ "Tổng Giám Đốc". Nó lùng sục toàn bộ hệ thống để tự xử lý cuốn chiếu khép kín:
-1. Gặp Ticket trống chữ ➡️ Tự dùng não `/vietbai`.
-2. Gặp Ticket chờ Media ➡️ Tự đẩy vào Engine kết xuất hình/video.
-3. Gặp Ticket chờ đăng ➡️ Tự móc khóa vào Playwright bắn tuốt lên Facebook.
-
-Nó chạy không biết mệt mỏi cho đến khi toàn bộ tài nguyên rác lột xác thành "Bài đăng xanh mượt" trên News Feed của khách hàng. Lúc này, ngài thực sự đạt cảnh giới Zero-Touch.
+| `BROLL_HOOK` | Video nền + tiêu đề lớn fade-in |
+| `BROLL_QUOTE` | Video nền + trích dẫn nghiêng |
+| `BROLL_STAT` | Video nền + số liệu khổng lồ |
+| `BROLL_BULLET` | Video nền + danh sách bullet |
+| `KINETIC_WORD` | Từ bùng nổ động trên nền đen |
+| `KINETIC_REVEAL` | Chữ trượt từ trái, từng dòng |
+| `KINETIC_COUNT` | Đếm số lên với vòng ring |
+| `ARCH_SPLIT` | Chia đôi màn hình (Sai vs Đúng) |
+| `ARCH_DATA` | Biểu đồ bar/comparison |
+| `ARCH_DIAGRAM` | Sơ đồ loop/flow/pyramid |
+| `ARCH_TERMINAL` | Giao diện terminal typing |
+| `DATA_PROGRESS` | Vòng ring đồng tâm (%) |
 
 ---
 
-## Chương 3: Cơ Chế Bất Khả Xâm Phạm (Profile Isolation)
+## 9. Xử Lý Lỗi Thường Gặp
 
-Cỗ máy 100X sở hữu một cơ chế mang tên **Cách ly Trình duyệt (Profile Isolation)** thông qua công nghệ Playwright.
+### ❌ "Cannot find module" khi chạy
 
-Điều này có nghĩa là gì? 
-Khi ngài chạy lệnh `/publish` lần đầu tiên, hệ thống sẽ mở ra một cửa sổ Facebook hoàn toàn Trắng. Ngài sẽ tự tay gõ Mật khẩu hoặc quét mã QR. 
-Sau lần đó, **Session (Phiên làm việc)** sẽ được lưu cứng vào thư mục `browser_data/`. 
+```bash
+# Giải pháp: Cài lại dependencies
+npm install
+cd scripts/reels_engine && npm install && cd ../..
+```
 
-Từ ngày hôm sau, Cỗ máy sẽ âm thầm vác cái Session đó đi đăng ngàn bài mà Facebook không bao giờ hỏi lại Mật khẩu. Trình duyệt của Cỗ máy hoàn toàn tách biệt khỏi Chrome cá nhân của ngài. Cực kỳ bảo mật và Chống Văng.
+### ❌ Video render xong nhưng chỉ có nền đen
 
-> [!CAUTION]
-> **Quy tắc vàng lúc máy Đăng bài:** Tại khâu chạy tự động của `/publish`, khi thấy con trỏ chuột của Cỗ máy đang tự điền Caption, ngài vui lòng **Thả tay khỏi chuột và bàn phím**. Hãy để nó được tự do thao tác trên DOM.
+Nguyên nhân: Thiếu video B-Roll trong `media-input/background-video/`
+
+```bash
+# Giải pháp 1: Thêm ít nhất 1 file .mp4 vào thư mục
+# Giải pháp 2: Cấu hình Pexels API key để tự động kéo video
+```
+
+### ❌ "Port 9876 already in use"
+
+```bash
+# macOS/Linux
+lsof -ti:9876 | xargs kill -9
+
+# Windows (PowerShell)
+Get-Process -Id (Get-NetTCPConnection -LocalPort 9876).OwningProcess | Stop-Process
+```
+
+### ❌ Không có giọng đọc trong video
+
+Nguyên nhân: Thiếu `ELEVENLABS_API_KEY` trong `.env`
+
+> Video vẫn render bình thường — chỉ không có voiceover. Thêm key ElevenLabs để bật tính năng này.
+
+### ❌ Playwright không mở được browser (lỗi đăng bài)
+
+```bash
+# Cài lại Chromium
+npx playwright install chromium --with-deps
+```
+
+### ❌ Lỗi "ENOENT: no such file or directory" khi render
+
+Nguyên nhân: Thư mục output chưa tồn tại
+
+```bash
+# Tạo thủ công
+mkdir -p media_output
+mkdir -p media-input/background-video
+mkdir -p media-input/background-music
+```
+
+### ❌ Render chậm / hết RAM (Windows)
+
+Nguyên nhân: Remotion dùng quá nhiều RAM
+
+> Hệ thống đã tự động đặt `--concurrency=1` trên Windows. Nếu vẫn chậm, tăng RAM ảo (Virtual Memory) lên 8 GB trong System Properties.
 
 ---
 
-## Chương 4: Bí Kíp Tối Thượng (Pro Tips)
+## 10. Tương Thích Đa Nền Tảng
 
-Để khai phá 100% năng lực thao túng của Cỗ Máy, ngài hãy nằm lòng 2 Tối Lệnh Quyền Lực sau:
+### Trạng Thái Hỗ Trợ
 
-### 🌟 PRO TIP 1: Mở rộng Đế chế Giao diện bằng `/add_template`
-Hệ thống này không bị bó buộc vào vài cái khung ảnh nhàm chán. 
-Nếu ngài có hàng loạt Mẫu Thiết Kế đẹp trên Canva, hoặc thấy trên mạng có bộ Carousel, Ảnh Quote nào quá xuất sắc, ngài chỉ việc gọi lệnh `/add_template`. 
-Cỗ máy (Antigravity) sẽ phân tích hình ảnh đó, dùng HTML/CSS tự đóng gói ra một "Khuôn Đúc Template" mới tinh. Ngài có thể thêm bao nhiêu Layout Thiết kế tuỳ thích để Render bất tận!
+| Tính năng | macOS | Windows | Linux |
+| :--- | :--- | :--- | :--- |
+| Tạo video (Reels) | ✅ | ✅ | ✅ |
+| Tạo ảnh/slide | ✅ | ✅ | ✅ |
+| Giọng đọc AI | ✅ | ✅ | ✅ |
+| Đăng bài tự động | ✅ | ✅ | ✅ |
+| Hardware acceleration | Metal (GPU) | DirectX | CPU only |
 
-### 🌟 PRO TIP 2: Thao túng Vibe Coding (Ngài là Chúa Tể Mã Nguồn)
-Cỗ máy này không phải là một cục phần mềm "Đóng chết" mua ngoài chợ đĩa. Nó là thực thể **Mã Nguồn Mở Tương Tác Sống (Vibe Coding)**.
-Nếu ngài muốn Cỗ máy chèn thêm nhạc nền vào Video? Muốn thêm tính năng cào data từ Instagram? Muốn tự động chửi thề cuối bài viết?
-👉 **Ngài HOÀN TOÀN TỰ ĐỔI ĐƯỢC MÀ KHÔNG CẦN BIẾT CODE!** 
-Chỉ cần chat trực tiếp với Antigravity như một thằng đệ Lập trình viên: 
-*"Ê Antigravity, từ nay tao muốn chế lại luồng /vietbai, mày hãy thêm cho tao tính năng..."*
-AI sẽ ngoan ngoãn đập đi xây lại cấu trúc theo đúng khẩu vị siêu đoản của ngài!
+### Lưu Ý Đặc Biệt Theo OS
 
-### 🧱 Lưu ý về Cấu trúc & Tài nguyên Nhận diện
-Để cỗ máy hoạt động trơn tru và không gặp lỗi "File not found" (Không tìm thấy tệp tin), ngài vui lòng tuân thủ vị trí đặt tài nguyên như sau:
-- **Avatar Cá nhân:** Đặt file `avatar.png` vào thư mục `media-input/`.
-- **Video nền B-Roll:** Đặt các clip ngắn vào thư mục `media-input/background-video/`.
-- **Thư mục đầu ra:** Mọi thành phẩm (Ảnh, Clip, Slide) sẽ tự động sinh ra trong `media_output/` theo ngày tháng. **TUYỆT ĐỐI KHÔNG** xóa các thư mục này khi cỗ máy đang chạy.
+#### Windows (64-bit)
+- Render video tự động dùng chế độ `--concurrency=1` (ổn định, chậm hơn ~30%)
+- Dùng **PowerShell** hoặc **Windows Terminal** — không dùng CMD cũ
+- Đường dẫn có ký tự `\` được xử lý tự động, không cần lo
 
-> [!TIP]
-> **Khắc phục lỗi Editor:** Nếu thấy Agent báo lỗi "The editor could not be opened", đó thường là do thư mục chứa tệp chưa kịp khởi tạo. Ngài chỉ cần bảo Agent: *"Hãy kiểm tra lại thư mục và tạo mới (mkdir -p) trước khi ghi file nhé"* — Hệ thống sẽ tự sửa lỗi ngay lập tức.
+#### Windows 32-bit — KHÔNG hỗ trợ
+Node.js 18+, Playwright, Puppeteer, Remotion đều không có phiên bản 32-bit. **Giải pháp thay thế:**
+- **VPS/Cloud:** Triển khai hệ thống trên máy chủ 64-bit, khách hàng truy cập qua giao diện web — không cần cài đặt gì trên máy
+- **Nâng cấp OS:** Windows 10/11 64-bit miễn phí cho phần lớn máy có CPU 64-bit ra đời từ 2007 trở đi
+
+#### macOS
+- Nếu gặp lỗi permission với Playwright: `sudo npx playwright install-deps`
+- Apple Silicon (M1/M2/M3): Hoàn toàn tương thích, render nhanh hơn Intel
+
+#### Linux
+- Cần cài thêm: `sudo apt-get install -y libgbm-dev libnss3 libatk-bridge2.0-0`
+- Chạy trên máy chủ không có màn hình: Playwright tự động dùng headless mode
 
 ---
 
-> Chào mừng đến với Kỷ Nguyên Sản Xuất Nội Dung Nhân Bản. 
-> Hãy mở Antigravity lên, và khai sinh Đế chế của ngài ngay hôm nay!
+## Cấu Trúc Thư Mục Tham Khảo
+
+```
+100X Content Agent/
+├── .env                    ← API Keys (KHÔNG chia sẻ file này)
+├── .env.example            ← Template API Keys
+├── GUIDE.md                ← File này
+├── database/
+│   ├── brand_config.json   ← Cấu hình thương hiệu
+│   └── ideation_pipeline.json ← Database ticket nội dung
+├── media-input/            ← Đặt media cá nhân vào đây
+│   ├── avatar.png
+│   ├── background-video/
+│   └── background-music/
+├── media_output/           ← Thành phẩm tự động xuất ra đây
+│   └── YYYY-MM-DD/
+│       └── content/
+│           └── TICKET_ID/
+│               └── reels/media.mp4
+├── scripts/                ← Engine xử lý (không cần chỉnh)
+│   ├── reels_engine.js
+│   ├── reels_engine/       ← Remotion React app
+│   └── utils/
+├── skills/                 ← Kịch bản hành vi AI
+└── database/
+```
+
+---
+
+> **Hỗ trợ:** Nếu gặp lỗi không có trong danh sách trên, hãy đọc file `render_debug.log` ở thư mục gốc và mô tả lỗi cho Claude Code xử lý.

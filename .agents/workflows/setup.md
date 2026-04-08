@@ -1,71 +1,161 @@
 ---
-description: Lệnh Khởi tạo Kiến trúc Nền tảng (Onboarding) dành cho Quản trị viên. Đưa người dùng qua 4 bước cấu hình bằng giao diện hỏi đáp tương tác.
+description: Lệnh Khởi tạo Kiến trúc Nền tảng (Onboarding) dành cho Quản trị viên. Đưa người dùng qua 5 bước cấu hình bằng giao diện hỏi đáp tương tác.
 ---
 
 # Lệnh: /setup
 
-**Mục tiêu:** Kích hoạt "Người Dẫn Đường" (Onboarding Wizard) để chuyển giao hệ thống 100X Content Agent cho một nhân sự mới hoặc tổ chức mới. 
+**Mục tiêu:** Kích hoạt "Người Dẫn Đường" (Onboarding Wizard) để chuyển giao hệ thống 100X Content Agent cho một nhân sự mới hoặc tổ chức mới.
+
 **QUY TẮC LÕI:** AI tuyệt đối KHÔNG ĐƯỢC nhồi nhét quá nhiều thông tin cùng 1 lúc. AI phải hỏi TỪNG BƯỚC MỘT, người dùng trả lời xong mới được đi tiếp sang bước sau.
+
+---
 
 ## 🧭 LỘ TRÌNH TƯƠNG TÁC (Chỉ chuyển bước khi đã hoàn thành bước trước)
 
 ### Lời Chào Mở Đầu:
-AI tự động chào mừng người dùng đến với Cỗ Máy 100X Content Agent và thông báo quy trình cài đặt sẽ diễn ra trong 4 bước đơn giản. Mời người dùng bắt đầu Bước 1.
+AI chào mừng người dùng đến với 100X Content Agent và thông báo quy trình cài đặt gồm **5 bước**. Giải thích ngắn gọn: đây là cỗ máy sản xuất nội dung AI tự động — từ ý tưởng đến Video/Ảnh/Slide đăng mạng xã hội, không cần biết code. Mời người dùng bắt đầu Bước 1.
 
 ---
 
-### Bước 1: Khai phá Lõi (SOUL & Strategy)
-**Nhiệm vụ của AI:** 
-- Hỏi người dùng 3 câu hỏi cơ bản: Tên thương hiệu/Nhân vật, Lợi thế khác biệt (USP), và Phong cách nói chuyện (Tone of Voice).
-- *(Chờ người dùng trả lời)*.
-- Sau khi nhận thông tin, AI tự động phân tích và lập bảng định dạng **Brand DNA**. Đồng thời, AI tự vạch ra **Ma trận Chiến lược 5x5** (5 Trụ cột x 5 Góc độ) phù hợp nhất với thương hiệu đó.
-- Trình bày cho người dùng xem và yêu cầu Xác nhận.
-- Nếu Xác nhận: AI **ghi đè dữ liệu** vào `database/brand_config.json` và `database/strategy.json`. Sau đó chuyển sang Bước 2.
+### Bước 1: Cài Đặt Kỹ Thuật (Technical Foundation)
 
----
-
-### Bước 2: Cắm Chìa Khóa Năng Lượng (API Config)
 **Nhiệm vụ của AI:**
-- Giải thích rành mạch: Vì Cỗ máy đã có *Antigravity* làm Bộ não Trung tâm lo toàn bộ việc Viết Lách và Tư Duy, người dùng KHÔNG CẦN tốn tiền mua ChatGPT hay Gemini API.
-- Cỗ máy chỉ cần 2 giác quan bổ trợ:
-  1. **Giọng nói (ElevenLabs)**: Để tạo Voiceover cho Video. (Đăng ký tại elevenlabs.io)
-  2. **Tài nguyên Video Nền (Pexels)**: Để tự động kéo B-Rolls chất lượng cao. (Đăng ký tại pexels.com)
-- **Hành động của AI:** AI thực hiện kiểm tra file `.env` tại thư mục gốc. Nếu chưa có, AI PHẢI TỰ ĐỘNG TẠO MỚI (Dùng `write_to_file`). Nếu đã có, AI thực hiện cập nhật khóa (Dùng `replace_file_content`).
-- Mẫu nội dung file `.env`:
-  ```env
-  ELEVENLABS_API_KEY="Điền_Key_Của_Bạn_Vào_Đây"
-  PEXELS_API_KEY="Điền_Key_Của_Bạn_Vào_Đây"
+- Kiểm tra xem `node_modules/` đã tồn tại chưa bằng cách đọc thư mục gốc.
+- Nếu CHƯA có: hướng dẫn người dùng chạy lệnh sau trong Terminal (macOS/Linux) hoặc PowerShell (Windows):
+  ```bash
+  npm install
   ```
-- *(Chờ người dùng báo "Đã điền xong")*. Chuyển sang Bước 3.
+  Giải thích: lệnh này tự động cài đặt toàn bộ thư viện cần thiết (Playwright, Remotion, ffmpeg, v.v.) và tạo file `.env` từ mẫu. Mất khoảng 2-3 phút.
+
+- Sau khi `npm install` xong, hướng dẫn cài Chromium browser (dùng cho tự động đăng bài):
+  ```bash
+  npx playwright install chromium
+  ```
+
+- *(Chờ người dùng báo "Xong" hoặc "Done")*. Chuyển sang Bước 2.
 
 ---
 
-### Bước 3: Tài Nguyên Nhận Diện Media (Avatar & B-Rolls)
+### Bước 2: Khai phá Lõi Thương Hiệu (Brand DNA)
+
 **Nhiệm vụ của AI:**
-- Hướng dẫn người dùng chuẩn bị **Tài nguyên Nhận diện (Tuỳ chọn - KHÔNG BẮT BUỘC):**
-  1. Hình ảnh Đại diện: Đặt một file tên là `avatar.png` vào thư mục `media-input/` (hỗ trợ đóng dấu Watermark cho khung hình nếu có).
-  2. Video Nền: Chuẩn bị một số Video Mờ / Phong cảnh thả vào thư mục `media-input/background-video/` nếu Quản trị viên muốn làm Reels mang thương hiệu cá nhân thay vì tự động kéo từ Pexels.
-- *(Chờ người dùng gõ "Tiếp tục" hoặc "Bỏ qua")*. Chuyển sang Bước 4.
+Hỏi người dùng 3 câu hỏi để khai thác Brand DNA:
+1. **Tên thương hiệu / Nhân vật** — Bạn là ai? Tên trang, kênh, hoặc tên cá nhân?
+2. **Điểm khác biệt (USP)** — Bạn chuyên về lĩnh vực gì? Khách hàng mục tiêu của bạn là ai?
+3. **Giọng nói thương hiệu (Tone)** — Phong cách nói chuyện của bạn: nghiêm túc, vui tươi, cá tính, chuyên gia, hay truyền cảm hứng?
+
+*(Chờ người dùng trả lời)*
+
+Sau khi nhận thông tin:
+- Phân tích và lập bảng **Brand DNA** tóm tắt.
+- Vạch ra **Ma trận Nội dung 5×5** (5 Trụ cột × 5 Góc độ) phù hợp với thương hiệu.
+- Trình bày cho người dùng xem và xin xác nhận.
+
+Nếu được xác nhận: AI **ghi vào** `database/brand_config.json` và `database/strategy.json`. Chuyển sang Bước 3.
 
 ---
 
-### Bước 4: Mạng Phân Phối & Trạm Điều Khiển (Facebook & Bảng Lệnh)
-**Nhiệm vụ của AI:**
-- Hỏi người dùng muốn hệ thống tự động đăng bài lên Đâu? (Trang Cá Nhân hay Fanpage? Nhập kèm URL mở rộng).
-- AI ghi nhận và tạo một bản ghi mới rớt vào `database/my_accounts.json` (VD: ID `profile_test`).
-- **LƯU Ý:** Trấn an người dùng là HỆ THỐNG CHƯA YÊU CẦU ĐĂNG NHẬP NGAY để giữ tính bảo mật. AI giải thích rành mạch: *"Chỉ khi nào ngài thực thi lệnh `/publish` để phát hành bài đầu tiên, hệ thống mới mở trình duyệt giả lập lên để ngài đăng nhập tài khoản một lần duy nhất. Sau đó Session sẽ được ghi nhớ."*
-- Cung cấp **Bảng Lệnh Điều Khiển (System Board)**:
-  | Lệnh Vận Hành | Chức Năng (Skill / Workflow) |
-  | :--- | :--- |
-  | `/research_ideas` | Lùng sục và phân tích Website/Mạng xã hội để nhào nặn Ý tưởng (Idea Bank) |
-  | `/vietbai` | Giao nhiệm vụ cho Bộ não (Brain) viết Master Content |
-  | `/tao_anh` | Kích hoạt Đặc nhiệm Thiết kế Ảnh Quote Cảm hứng |
-  | `/tao_video` | Kích hoạt Đặc nhiệm Đạo diễn Video Reels (Voiceover ElevenLabs) |
-  | `/xem_output` | Duyệt kho Media thành phẩm 100% trước giờ G |
-  | `/publish` | Lên nòng, Đăng bài tự động lên Facebook / MXH |
-  | `/auto_mode` | Chuyên cơ chế độ Rảnh tay: Chạy đồng loạt mọi Ticket ý tưởng một nút h bấm |
+### Bước 3: Cắm Chìa Khóa Năng Lượng (API Keys)
 
-- Kêu gọi người dùng tham khảo tài liệu [GUIDE.md](file:///Users/hoangbatau/Desktop/Vibe%20Coding/100X%20Content%20Agent/GUIDE.md) nằm ở thư mục gốc nếu muốn vọc sâu hơn các bí thuật Cỗ Máy.
-- **Giải thích thư mục Đầu ra:** Nhắc nhở người dùng rằng mọi Thành phẩm Media cuối cùng (Hình ảnh, Video Reels, Carousel) sau khi tạo xong đều sẽ tự động lưu vào thư mục `media_output/` theo từng phân loại cụ thể để họ dễ dàng kiểm tra.
-- Bắn Pháo hoa 🎉. Khép lại tiến trình `/setup` và mời người dùng gạt cần sang số bằng cách gõ `/vietbai` để khai trương!
+**Nhiệm vụ của AI:**
+Giải thích rõ ràng cỗ máy cần **3 chìa khóa** để hoạt động đầy đủ:
+
+| # | Chìa khóa | Mục đích | Đăng ký |
+|---|---|---|---|
+| 1 | **GEMINI_API_KEY** | AI viết nội dung (/vietbai, /research_ideas) | [aistudio.google.com](https://aistudio.google.com) (Miễn phí) |
+| 2 | **PEXELS_API_KEY** | Kho video B-Roll miễn phí | [pexels.com/api](https://www.pexels.com/api/) (Free) |
+| 3 | **ELEVENLABS_API_KEY** | Giọng đọc AI cho Video | [elevenlabs.io](https://elevenlabs.io) (có gói Free) |
+
+> **Lưu ý:** Tất cả đều là tùy chọn — không có vẫn chạy được. Không có Gemini → `/vietbai` không hoạt động. Không có Pexels → chỉ dùng video local. Không có ElevenLabs → video không có giọng đọc AI.
+
+**Hướng dẫn điền key:**
+- Mở file `.env` ở thư mục gốc dự án bằng bất kỳ text editor nào.
+- Tìm dòng tương ứng và thay thế phần `"dien_key..."` bằng key thật.
+- Lưu file.
+
+**Hành động của AI:** Kiểm tra file `.env` đã tồn tại chưa. Nếu chưa có, tự động tạo từ `.env.example`.
+
+*(Chờ người dùng báo "Đã điền xong")*. Chuyển sang Bước 4.
+
+---
+
+### Bước 4: Tài Nguyên Nhận Diện Media (Avatar & B-Rolls)
+
+**Nhiệm vụ của AI:**
+Hướng dẫn chuẩn bị **Tài nguyên cá nhân** (không bắt buộc, nhưng giúp video trông authentic hơn):
+
+```
+media-input/
+├── avatar.png          ← Ảnh headshot/avatar của bạn (1:1)
+├── background-video/   ← Clip B-Roll cá nhân (.mp4, quay dọc 9:16 tốt nhất)
+└── background-music/   ← Nhạc nền (.mp3 hoặc .wav)
+```
+
+Giải thích:
+- Nếu không có video cá nhân → hệ thống tự động kéo B-Roll từ Pexels (cần Pexels API key).
+- Nếu không có nhạc → video vẫn tạo được, chỉ không có nhạc nền.
+- Đặt tên file nhạc có chứa từ khóa vibe để hệ thống tự chọn đúng (vd: `lofi_chill.mp3`, `epic_motivate.mp3`).
+
+*(Chờ người dùng gõ "Tiếp tục" hoặc "Bỏ qua")*. Chuyển sang Bước 5.
+
+---
+
+### Bước 5: Mạng Phân Phối (Facebook & Bảng Lệnh)
+
+**Nhiệm vụ của AI:**
+Hỏi người dùng **2 câu** để thiết lập kênh phân phối:
+
+**Câu 1:** Bạn muốn đăng bài lên đâu? (Trang Cá nhân / Fanpage / nhiều kênh?) — Nhập tên kênh và URL.
+
+**Câu 2:** Khung giờ đăng bài mỗi ngày của bạn là gì? Gợi ý mặc định nếu chưa có:
+- 8h30 → Carousel (năng lượng sáng)
+- 11h30 → Ảnh/Image (giờ nghỉ trưa)
+- 15h30 → Video B-Roll (chiều tập trung giảm)
+- 19h30 → Infographic (tối thư giãn)
+
+Người dùng có thể giữ mặc định hoặc tùy chỉnh số slot, giờ, và loại nội dung.
+
+AI ghi nhận đầy đủ vào `database/my_accounts.json` theo schema:
+```json
+{
+  "channels": [
+    {
+      "name": "Facebook",
+      "url": "https://facebook.com/...",
+      "posting_schedule": [
+        { "time": "8h30",  "content_type": "carousel",   "vibe": "motivational" },
+        { "time": "11h30", "content_type": "image",       "vibe": "tips" },
+        { "time": "15h30", "content_type": "video_broll", "vibe": "educational" },
+        { "time": "19h30", "content_type": "infographic", "vibe": "storytelling" }
+      ]
+    }
+  ]
+}
+```
+
+> **Lưu ý:** `content_type` hợp lệ: `carousel`, `image`, `video_broll`, `video`, `infographic`.
+
+**Trấn an về bảo mật:** Hệ thống CHƯA đăng nhập Facebook ngay. Chỉ khi chạy lệnh `/publish` lần đầu, hệ thống mới mở browser để người dùng tự đăng nhập một lần. Sau đó session được lưu lại — lần sau tự động.
+
+**Bảng Lệnh Điều Khiển:**
+
+| Lệnh | Chức năng |
+| :--- | :--- |
+| `/vietbai` | Viết Master Content từ ý tưởng |
+| `/research_ideas` | Tự động tìm ý tưởng viral từ đối thủ |
+| `/tao_anh` | Tạo ảnh quote/inspiration |
+| `/tao_video` | Tạo video Reels 60-90 giây (có B-Roll + giọng đọc AI) |
+| `/tao_carousel` | Tạo carousel 10 slide |
+| `/tao_infographic` | Tạo infographic |
+| `/publish` | Tự động đăng bài lên Facebook |
+| `/auto_mode` | Chế độ rảnh tay: tự chạy hết từ ý tưởng → đăng bài |
+
+**Giải thích thư mục đầu ra:** Mọi thành phẩm (video, ảnh, slide) tự động lưu vào `media_output/YYYY-MM-DD/` theo ngày — không bao giờ bị lẫn lộn.
+
+**Tài liệu chi tiết:** Đọc thêm `GUIDE.md` ở thư mục gốc nếu muốn hiểu sâu hơn.
+
+---
+
+🎉 **Kết thúc Setup!** Bắn pháo hoa và mời người dùng gõ `/vietbai` để khai trương cỗ máy!
+
 // turbo-all

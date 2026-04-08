@@ -26,13 +26,28 @@ Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thốn
 - **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận, phân tích Idea và viết ra một bài nội dung nguyên bản (Master Content) dài và chất lượng, lưu thẳng vào `master_content.md`. (Bỏ qua bước bắt Quản trị viên gõ `/vietbai`).
 - **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng tệp `master_content.md` hiện tại.
 
-### Bước 1.5: Khám Xét Kho Ảnh (Asset Discovery) - TOKEN-FREE
+### Bước 1.5a: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
+Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau và ghi nhớ các giá trị thực:
+```bash
+cat database/brand_config.json
+```
+Trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `founder`
+- `BRAND_HANDLE` = `brand_identity.handle`
+- `ACCENT_COLOR` = `brand_identity.colors.accent`
+- `FONT_PRIMARY` = `brand_identity.fonts.primary`
+- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+
+> ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên. Nếu file không có trường nào, để trống — KHÔNG đặt giá trị mặc định tự nghĩ ra.
+
+### Bước 1.5b: Khám Xét Kho Ảnh (Asset Discovery) - TOKEN-FREE
 Để chọn Layout tối ưu (2/3 hay Center-Card), Trợ lý **BẮT BUỘC** thực hiện lệnh liệt kê file sau (Không tốn Token Vision):
 ```bash
 ls media-input/celebrity_image && ls media-input/personal_image
 ```
 - Nếu thấy tên file khớp với chủ đề bài (VD: `warren_buffett.jpg` cho bài về Buffett) -> **Ghi chú lại để dùng Layout Portrait-Fade (65/35) ở Bước 2.**
 - Nếu không thấy -> Mặc định dùng Layout Typography (`Center-Card` hoặc `Split-Screen`).
+- Ghi nhớ: Tên thương hiệu = `FOUNDER_NAME`, Handle = `BRAND_HANDLE` đã đọc ở Bước 1.5a.
 
 ### Bước 2: Khởi động Tối Cao Lệnh Tạo Ảnh (Image Specialist)
 - Tải hệ thống Kỹ năng nòng cốt: `skills/media/image_specialist.md`.

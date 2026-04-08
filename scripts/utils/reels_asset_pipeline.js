@@ -11,6 +11,14 @@ const HEYGEN_KEY = process.env.HEYGEN_API_KEY;
 const MICRO_SERVER_URL = "http://localhost:9876";
 
 /**
+ * Chuyển đường dẫn tuyệt đối → HTTP URL qua micro-server ticket-assets
+ * Dùng thay cho file:// để tương thích Windows + Remotion
+ */
+function toTicketHttpUrl(filename) {
+    return `${MICRO_SERVER_URL}/ticket-assets/${encodeURIComponent(path.basename(filename))}`;
+}
+
+/**
  * 📥 Hàm Tải File Chung
  */
 async function downloadFile(fileUrl, outputPath) {
@@ -48,7 +56,7 @@ async function getPexelsBroll(query, sceneIndex, destDir) {
             const dest = path.join(destDir, `scene_${sceneIndex}_bg.mp4`);
             await downloadFile(hdFile.link, dest);
             console.log(`[Pexels] Đã tải xong nền cho Cảnh ${sceneIndex}`);
-            return `file://${dest}`;
+            return toTicketHttpUrl(dest);
         }
     } catch (err) {
         console.error(`[Pexels Lỗi] Cảnh ${sceneIndex}:`, err.message);
@@ -57,46 +65,39 @@ async function getPexelsBroll(query, sceneIndex, destDir) {
 }
 
 /**
- * 📂 1.5. LOCAL VIDEO: Trích xuất nền Video Cá nhân
+ * 📂 1.5. LOCAL VIDEO: Trích xuất nền Video Cá nhân (Ưu tiên SSoT)
  */
 async function getLocalBroll(query, sceneIndex) {
     const dir = path.join(__dirname, '..', '..', 'media-input', 'background-video');
+    
+    // Tạo folder nếu chưa có để tránh lỗi crash nhưng báo cáo là không thấy file
     if (!fs.existsSync(dir)) {
-        console.log(`[Local Video] Thư mục media-input/background-video chưa tồn tại.`);
+        fs.mkdirSync(dir, { recursive: true });
         return null;
     }
 
-    // Lấy toàn bộ file mp4/webm (Cấm .mov vì Chromium không hỗ trợ HEVC/H.265)
+    // Lấy toàn bộ file mp4/webm/mov (Remotion hỗ trợ tốt mp4)
     let files = fs.readdirSync(dir);
-    const validFiles = files.filter(f => f.match(/\.(mp4|webm)$/i));
-    const movFiles = files.filter(f => f.match(/\.mov$/i));
-
-    if (movFiles.length > 0 && validFiles.length === 0) {
-        console.log(`[Cảnh báo Local Video] Đã tìm thấy file .MOV...`);
-    }
+    const validFiles = files.filter(f => f.match(/\.(mp4|webm|mov)$/i));
 
     if (validFiles.length === 0) {
-        console.log(`[Local Video] Thư mục trống! Fallback sang Pexels.`);
         return null;
     }
 
     let matches = validFiles;
-    if (query) {
+    if (query && query !== 'business' && query !== 'office') {
         const keywordMatches = validFiles.filter(f => f.toLowerCase().includes(query.toLowerCase()));
         if (keywordMatches.length > 0) {
             matches = keywordMatches;
-        } else {
-            console.log(`[Local Video] Không tìm thấy khớp cho "${query}", chọn ngẫu nhiên một file...`);
-            matches = validFiles;
         }
     }
 
     const randomFile = matches[Math.floor(Math.random() * matches.length)];
-    const absolutePath = `file://${path.join(dir, randomFile)}`;
-    console.log(`\n📂 [Local Media Found] 🎯 Đã bốc video từ kho cá nhân: "${randomFile}"`);
-    console.log(`🔗 [Path] ${absolutePath}`);
+    // Trả HTTP URL qua micro-server (port 9876) — tương thích mọi OS, Remotion không nhận file:// URL
+    const httpUrl = `http://localhost:9876/media-input/background-video/${encodeURIComponent(randomFile)}`;
+    console.log(`\n📂 [Smart Sourcing] 🎯 Đã bốc video từ kho cá nhân: "${randomFile}" (Cảnh ${sceneIndex})`);
 
-    return absolutePath;
+    return httpUrl;
 }
 
 /**
@@ -125,8 +126,8 @@ async function getElevenLabsVoice(text, sceneIndex, destDir, defaultVoiceId = "p
 
         console.log(`[ElevenLabs] Đã bóc băng Karaoke cho Cảnh ${sceneIndex}`);
         return {
-            audioPath: `file://${destAudio}`,
-            karaokePath: `file://${destAlign}`,
+            audioPath: toTicketHttpUrl(destAudio),
+            karaokePath: toTicketHttpUrl(destAlign),
             absoluteAudioPath: destAudio
         };
     } catch (err) {
@@ -176,7 +177,7 @@ async function getHeyGenAvatar(text, sceneIndex, destDir) {
         await downloadFile(videoUrl, destVid);
 
         console.log(`[HeyGen] Thu hoạch khoai xong! Nền xanh Cảnh ${sceneIndex} đã tải về.`);
-        return `file://${destVid}`;
+        return toTicketHttpUrl(destVid);
 
     } catch (err) {
         console.error(`[HeyGen Lỗi]`, err.response?.data || err.message);
@@ -184,17 +185,33 @@ async function getHeyGenAvatar(text, sceneIndex, destDir) {
     return null;
 }
 
-async function getLocalMusic() {
+/**
+ * 🎵 SMART MUSIC: Tải nhạc từ kho Local
+ */
+async function getLocalMusic(vibe = 'lofi') {
     const musicDir = path.join(__dirname, '..', '..', 'media-input', 'background-music');
-    if (!fs.existsSync(musicDir)) return null;
+    if (!fs.existsSync(musicDir)) {
+        fs.mkdirSync(musicDir, { recursive: true });
+        return null;
+    }
 
-    const files = fs.readdirSync(musicDir).filter(f => !f.startsWith('.') && (f.toLowerCase().endsWith('.mp3') || f.toLowerCase().endsWith('.wav') || f.toLowerCase().endsWith('.m4a')));
+    const files = fs.readdirSync(musicDir).filter(f => 
+        !f.startsWith('.') && (f.toLowerCase().endsWith('.mp3') || f.toLowerCase().endsWith('.wav'))
+    );
+    
     if (files.length === 0) return null;
 
-    const randomFile = files[Math.floor(Math.random() * files.length)];
-    
-    console.log(`[Music] Đã nạp nhạc nền Local: ${randomFile}`);
-    return `file://${path.join(musicDir, randomFile)}`;
+    // Logic lọc theo vibe (nếu tên file có chứa vibe)
+    let matches = files;
+    if (vibe) {
+        const vibeMatches = files.filter(f => f.toLowerCase().includes(vibe.toLowerCase()));
+        if (vibeMatches.length > 0) matches = vibeMatches;
+    }
+
+    const randomFile = matches[Math.floor(Math.random() * matches.length)];
+    console.log(`🎵 [Music] Đã chọn nhạc nền (${vibe || 'random'}): ${randomFile}`);
+    // Trả HTTP URL qua micro-server (port 9876) — tương thích mọi OS
+    return `http://localhost:9876/media-input/background-music/${encodeURIComponent(randomFile)}`;
 }
 
 module.exports = {

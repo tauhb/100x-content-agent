@@ -12,8 +12,9 @@ Tuyệt đối KHÔNG đăng xuất mã phân quyền nền tảng (Cookies) san
 ## ⚙️ QUY TẮC NGỮ CẢNH TỰ ĐỘNG (CONTEXT-AWARE RULE)
 Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thống thực hiện theo thứ tự ưu tiên:
 1. **Ưu tiên 1:** Sử dụng Post ID vừa được kết xuất/phê duyệt trong phiên hội thoại hiện tại.
-2. **Ưu tiên 2:** Truy xuất `database/post_inventory.json`, lấy dự án có trạng thái `pending_publish`.
-3. **Ưu tiên 3:** Nếu cả 2 nguồn trên đều trống, hỏi lại Quản trị viên.
+2. **Ưu tiên 2:** Đồng bộ từ Google Sheets CONTENT PIPELINE về local — chạy `node scripts/google_sync_engine.js --down` — lấy các bài có trạng thái `🚀 ĐĂNG BÀI NGAY` (bao gồm cả thành phẩm từ `/auto_mode [kênh]`).
+3. **Ưu tiên 3:** Truy xuất `database/post_inventory.json`, lấy dự án có trạng thái `pending_publish`.
+4. **Ưu tiên 4:** Nếu tất cả nguồn trên đều trống, hỏi lại Quản trị viên.
 
 ---
 

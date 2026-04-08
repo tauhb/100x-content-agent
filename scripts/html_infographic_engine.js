@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { saveDeliverableAndPrunePipeline } = require('./utils/inventory_manager');
-const { getAssetForImageEngine } = require('./utils/image_asset_pipeline');
+const { getAssetForImageEngine, resolveAssetToBase64 } = require('./utils/image_asset_pipeline');
 
 async function renderDynamicInfographic(inputHtmlPath) {
     if (!fs.existsSync(inputHtmlPath)) {
@@ -35,15 +35,8 @@ async function renderDynamicInfographic(inputHtmlPath) {
             console.log(`[Camera Engine] Đã nhận diện Avatar cá nhân: ${path.basename(avatarPath)}`);
         } else {
             // Fallback sang Asset Pipeline nếu không có file local
-            const bgImageUrl = await getAssetForImageEngine(founderName, 'personal_image');
-            if (bgImageUrl && bgImageUrl.startsWith('file://')) {
-                const localPath = decodeURI(bgImageUrl.slice(7));
-                const ext = path.extname(localPath).substring(1) || 'jpg';
-                const data = fs.readFileSync(localPath, 'base64');
-                avatarImgSrc = `data:image/${ext};base64,${data}`;
-            } else if (bgImageUrl) {
-                avatarImgSrc = bgImageUrl;
-            }
+            const resolved = resolveAssetToBase64(await getAssetForImageEngine(founderName, 'personal_image'));
+            if (resolved) avatarImgSrc = resolved;
         }
     } catch (e) {
         console.error('[Cảnh báo] Lỗi kết xuất Avatar:', e.message);
@@ -52,13 +45,7 @@ async function renderDynamicInfographic(inputHtmlPath) {
     // Fetch Background from image_stock
     let bgImgSrc = '';
     try {
-        const bgUrl = await getAssetForImageEngine('', 'image_stock');
-        if (bgUrl && bgUrl.startsWith('file://')) {
-            const localPath = decodeURI(bgUrl.slice(7));
-            const ext = path.extname(localPath).substring(1) || 'jpg';
-            const data = fs.readFileSync(localPath, 'base64');
-            bgImgSrc = `data:image/${ext};base64,${data}`;
-        }
+        bgImgSrc = resolveAssetToBase64(await getAssetForImageEngine('', 'image_stock'));
     } catch (e) {
         console.error('[Cảnh báo] Lỗi kết xuất Background:', e.message);
     }

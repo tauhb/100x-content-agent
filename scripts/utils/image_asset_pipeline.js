@@ -97,9 +97,8 @@ async function getAssetForImageEngine(keyword, media_source) {
         }
 
         if (selectedFile) {
-             // ĐÓNG ĐƯỜNG DẪN TUYỆT ĐỐI CHỐNG LỖI WINDOWS
-             const absolutePath = path.resolve(targetDir, selectedFile).replace(/\\/g, '/');
-             return 'file://' + encodeURI(absolutePath);
+            // Trả đường dẫn tuyệt đối — caller sẽ convert sang base64 để tránh CORS/file:// trên Windows
+            return path.resolve(targetDir, selectedFile);
         }
     }
     
@@ -114,6 +113,28 @@ async function getAssetForImageEngine(keyword, media_source) {
     return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
 }
 
+/**
+ * Chuẩn hóa kết quả từ getAssetForImageEngine thành base64 data URI
+ * hoặc HTTP URL. Thay thế pattern `file://` cũ — tương thích Windows.
+ * @param {string|null} result - giá trị trả về từ getAssetForImageEngine
+ * @returns {string} base64 data URI hoặc http URL, rỗng nếu thất bại
+ */
+function resolveAssetToBase64(result) {
+    if (!result) return '';
+    // HTTP/HTTPS URL — trả thẳng
+    if (result.startsWith('http')) return result;
+    // Legacy file:// (giữ lại compat)
+    const localPath = result.startsWith('file://') ? decodeURI(result.replace(/^file:\/{2,3}/, '')) : result;
+    try {
+        const ext = path.extname(localPath).substring(1) || 'jpg';
+        const data = fs.readFileSync(localPath, 'base64');
+        return `data:image/${ext};base64,${data}`;
+    } catch {
+        return '';
+    }
+}
+
 module.exports = {
-    getAssetForImageEngine
+    getAssetForImageEngine,
+    resolveAssetToBase64,
 };

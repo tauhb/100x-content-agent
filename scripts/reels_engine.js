@@ -2,6 +2,14 @@ const fs = require('fs');
 const path = require('path');
 const http = require('http');
 const { execSync } = require('child_process');
+const { exec } = require('child_process');
+const execAsync = (cmd, opts) => new Promise((resolve, reject) => {
+    const child = exec(cmd, { ...opts, maxBuffer: 1024 * 1024 * 512 }, (err, stdout, stderr) => {
+        if (err) reject(err); else resolve({ stdout, stderr });
+    });
+    child.stdout?.pipe(process.stdout);
+    child.stderr?.pipe(process.stderr);
+});
 const { getAssetForImageEngine } = require('./utils/image_asset_pipeline');
 
 function startMediaServer(port, roots) {
@@ -93,11 +101,22 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
         console.warn("⚠️ Không thể chuyển đổi branding sang Base64:", e.message);
     }
 
-    // Inject branding vào từng cảnh (hoặc Global Props) cho Remotion đọc
+    // Inject full brand profile vào từng cảnh (white-label: không hardcode trong component)
+    const brandPrimaryFont = brandConfig.brand_identity?.fonts?.primary || 'Inter';
+    const brandAccentFont = brandConfig.brand_identity?.fonts?.accent || 'Playfair Display';
+    const brandHandle = brandConfig.brand_identity?.handle || '';
+    const brandFounder = brandConfig.founder || '';
+    const brandWatermark = brandConfig.brand_identity?.watermark || {};
+
     timeline.forEach(scene => {
         scene.brand_avatar = avatarBase64;
         scene.brand_logo = logoBase64;
         scene.brand_accent = accentColor;
+        scene.brand_primary_font = brandPrimaryFont;
+        scene.brand_accent_font = brandAccentFont;
+        scene.brand_handle = brandHandle;
+        scene.brand_founder = brandFounder;
+        scene.brand_watermark = brandWatermark;
     });
     // ------------------------------------------------------
 
@@ -142,7 +161,8 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
         console.log(`\n▶️ Xử lý Tài nguyên Cảnh ${sceneNum}/${timeline.length}...`);
 
         // --- NEW: Asset Pipeline v5.4 (Speed & Clean Handling) ---
-        if (scene.bg_video || scene.b_roll_keywords) {
+        // ONLY load background video for ARCH_BROLL scenes or if explicitly requested
+        if ((scene.bg_video || scene.b_roll_keywords) && (scene.archetype === 'ARCH_BROLL' || scene.archetype === 'MEDIA_TOP' || (scene.archetype && scene.archetype.startsWith('BROLL_')) || scene.ambient_broll)) {
             let sourceFile = null;
             let query = "";
             if (scene.b_roll_keywords) {
@@ -186,8 +206,10 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
         } else {
             console.log(`[Engine] 💡 Chế độ Minimalist (Không có Voice).`);
             if (!scene.duration_sec) {
-                scene.duration_sec = 8; // Mặc định 8s cho B-Roll Loop
-                console.log(`✅ [Duration] Set mặc định 8s cho Reel Minimalist.`);
+                // scene_rhythm: fast=3s, medium=4s (default), slow=7s
+                const rhythmMap = { fast: 3, medium: 4, slow: 7 };
+                scene.duration_sec = rhythmMap[scene.scene_rhythm] || 4;
+                console.log(`✅ [Duration] Set ${scene.duration_sec}s (rhythm: ${scene.scene_rhythm || 'medium'}).`);
             }
         }
 
@@ -238,8 +260,41 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
         if (vc.headline && !vc.quote) vc.quote = vc.headline;
 
         // --- NEW: Tự động gán Template Core nếu thiếu ---
+        // Nếu scene có archetype (từ video_director_specialist) → archetype_director
         if (!scene.template_core) {
-            scene.template_core = 'single_scene_dark'; // Mặc định dùng Single Scene Template
+            if (scene.archetype) {
+                scene.template_core = 'archetype_director';
+            } else {
+                scene.template_core = 'single_scene_dark'; // Mặc định dùng Single Scene Template
+            }
+        }
+
+        // --- Normalize keyword từ Director schema sang pipeline field ---
+        // Director có thể xuất props.keyword (schema V1), chuẩn hóa sang b_roll_keywords
+        if (!scene.b_roll_keywords && scene.props?.keyword) {
+            scene.b_roll_keywords = [scene.props.keyword];
+        }
+
+        // --- Normalize data format cho ARCH_DATA ---
+        // Director có thể xuất props.chart_data: { label: value } (object)
+        // MetricChart.tsx kỳ vọng props.data: [{ label, value }] (array)
+        if (scene.archetype === 'ARCH_DATA' && scene.props) {
+            if (scene.props.chart_data && !Array.isArray(scene.props.data)) {
+                scene.props.data = Object.entries(scene.props.chart_data).map(([label, value]) => ({
+                    label,
+                    value: Number(value)
+                }));
+                delete scene.props.chart_data;
+            }
+        }
+
+        // --- Normalize code_lines → lines cho ARCH_TERMINAL ---
+        // Director xuất props.code_lines, CodeTerminal.tsx đọc props.lines
+        if (scene.archetype === 'ARCH_TERMINAL' && scene.props) {
+            if (scene.props.code_lines && !scene.props.lines) {
+                scene.props.lines = scene.props.code_lines;
+                delete scene.props.code_lines;
+            }
         }
 
         // 3. Fallback cho List Cascade (Nếu kịch bản chỉ có Headline mà layout là List)
@@ -282,8 +337,8 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
         const command = `npx remotion render src/index.ts MainComposition "${outputPath}" --props="${inputPropsPath}" --codec=${codec} --image-format=jpeg --jpeg-quality=80 --crf=28 --puppeteer-timeout=120000 --overwrite ${hwFlag}`;
 
         try {
-            // Bơm 4GB RAM cho tiến trình chạy lệnh để diệt tận gốc OOM
-            execSync(command, { cwd: remotionEngineDir, stdio: 'inherit', env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" } });
+            // Dùng execAsync (non-blocking) để micro-server vẫn xử lý HTTP request trong lúc Remotion render
+            await execAsync(command, { cwd: remotionEngineDir, env: { ...process.env, NODE_OPTIONS: "--max-old-space-size=4096" } });
         } finally {
             // CLEANUPS: Zero-Garbage Compliance
             if (fs.existsSync(inputPropsPath)) fs.unlinkSync(inputPropsPath);
@@ -353,24 +408,36 @@ if (require.main === module) {
             }
             let formattedData = timelineData;
 
-            // Tương thích mảng mới script_segments nếu có (Tự chuẩn hóa thành chuẩn Timeline)
+            // Tương thích mảng script_segments — phân biệt format mới (archetype) và cũ (legacy)
             const activeSegments = payload.script_segments || (payload.visual_content && payload.visual_content.script_segments);
             if (activeSegments) {
-                formattedData = activeSegments.map(seg => ({
-                    voice_text: seg.text || seg.voice_text,
-                    duration_sec: seg.duration,
-                    b_roll_keywords: seg.b_roll_keywords || [payload.visual_content.keyword || 'business'],
-                    require_pip: payload.template === 'ai_spokesperson',
-                    video_source_override: seg.video_source_override,
-                    bg_video: seg.bg_video || null,
-                    visual_content: {
-                        ...seg,
-                        headline: seg.headline || '',
-                        list: seg.list || seg.bullets || []
-                    },
-                    layout_skin: seg.layout_skin || 'title_hook',
-                    template_core: seg.template_core || 'single_scene_dark'
-                }));
+                formattedData = activeSegments.map(seg => {
+                    // FORMAT MỚI: scene có archetype field → giữ nguyên toàn bộ, chỉ chuẩn hoá tên field
+                    if (seg.archetype) {
+                        return {
+                            ...seg,
+                            voice_text: seg.voice_text || seg.text || '',
+                            duration_sec: seg.duration_sec || seg.duration || 6,
+                            template_core: 'archetype_director',
+                        };
+                    }
+                    // FORMAT CŨ: legacy single_scene_dark
+                    return {
+                        voice_text: seg.text || seg.voice_text,
+                        duration_sec: seg.duration || seg.duration_sec,
+                        b_roll_keywords: seg.b_roll_keywords || (payload.visual_content?.keyword ? [payload.visual_content.keyword] : []),
+                        require_pip: payload.template === 'ai_spokesperson',
+                        video_source_override: seg.video_source_override,
+                        bg_video: seg.bg_video || null,
+                        visual_content: {
+                            ...seg,
+                            headline: seg.headline || '',
+                            list: seg.list || seg.bullets || []
+                        },
+                        layout_skin: seg.layout_skin || 'title_hook',
+                        template_core: seg.template_core || 'single_scene_dark'
+                    };
+                });
             }
 
             // FETCH AVATAR/CELEBRITY IMAGE IF KEYWORD EXIST
@@ -379,14 +446,14 @@ if (require.main === module) {
                 const searchKeyword = payload.keyword || payload.visual_content.keyword;
                 try {
                     console.log(`[Reels Engine] Đang móc Ảnh Avatar qua Keyword: ${searchKeyword}`);
-                    const bgImageUrl = await getAssetForImageEngine(searchKeyword);
-                    if (bgImageUrl && bgImageUrl.startsWith('file://')) {
-                        const localPath = decodeURI(bgImageUrl.slice(7));
-                        const ext = path.extname(localPath).substring(1) || 'jpg';
-                        const data = fs.readFileSync(localPath, 'base64');
+                    const bgImageResult = await getAssetForImageEngine(searchKeyword);
+                    if (bgImageResult && (bgImageResult.startsWith('/') || /^[A-Za-z]:[\\\/]/.test(bgImageResult))) {
+                        // Local absolute path → convert to base64 (cross-platform, avoids file:// issues)
+                        const ext = path.extname(bgImageResult).substring(1) || 'jpg';
+                        const data = fs.readFileSync(bgImageResult, 'base64');
                         hookImageBase64 = `data:image/${ext};base64,${data}`;
-                    } else if (bgImageUrl) {
-                        hookImageBase64 = bgImageUrl; // If it's http
+                    } else if (bgImageResult && bgImageResult.startsWith('http')) {
+                        hookImageBase64 = bgImageResult;
                     }
                 } catch (err) {
                     console.error(`[Reels Engine] Lỗi load Hook Image:`, err);

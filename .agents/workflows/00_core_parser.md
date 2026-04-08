@@ -15,6 +15,12 @@ description: (GIAO THỨC TRÍ TUỆ NGẦM - ALWAYS ON) Lệnh định tuyến 
    - Ví dụ: *"Cào kênh fanpage ABC kia kìa"* → Máy nhận diện `/research_ideas` với URL đầu vào.
    - Ví dụ: *"Post bài luôn đi"* → Máy nhận diện `/publish`.
    - Ví dụ: *"Cập nhật từ sheet"* hoặc *"Duyệt bài hàng loạt trên bảng tính"* → Máy nhận diện `/sheets_action`.
+   - Ví dụ: *"Lên lịch cho kênh Facebook hôm nay"* hoặc *"Auto kênh TikTok"* → Máy nhận diện `/auto_mode [tên kênh]` (Chế độ 3 - Schedule Autopilot).
+
+   **Quy tắc phân biệt `/auto_mode` Chế độ 2 vs Chế độ 3:**
+   - Nếu tham số truyền vào là **tên kênh có trong `database/my_accounts.json`** (Facebook, TikTok, YouTube Shorts, Instagram Reels, LinkedIn) → Chế độ 3 (Schedule Autopilot theo lịch kênh).
+   - Nếu tham số truyền vào là **ý tưởng/chủ đề nội dung cụ thể** (không phải tên kênh) → Chế độ 2 (Omnichannel Generator).
+   - Nếu không có tham số → Chế độ 1 (Dọn kho tồn đọng).
 
 2. **Dung sai Tối nghĩa (Max 3 Questions Threshold):**
    Trợ lý không phải là cỗ máy nhận lệnh mù quáng. Khi Câu lệnh Ngôn Ngữ Tự Nhiên (Natural Language) đưa ra **Thiếu trên 2 tham số quan trọng**, AI CHUYỂN TRẠNG THÁI sang HỎI ĐÁP CHUYÊN GIA.

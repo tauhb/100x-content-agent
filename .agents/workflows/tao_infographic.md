@@ -15,6 +15,19 @@ description: Lệnh phân tích và thiết kế đồ hoạ dài (Infographic) 
 - **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.
 - **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng nội dung gốc `master_content.md`.
 
+### Bước 1.5: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
+Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau:
+```bash
+cat database/brand_config.json
+```
+Trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `founder`
+- `BRAND_HANDLE` = `brand_identity.handle`
+- `ACCENT_COLOR` = `brand_identity.colors.accent`
+- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+
+> ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên.
+
 ### Bước 2: Phát Động Tối Cao Lệnh Tạo Infographic (Infographic Specialist)
 - **TÍCH HỢP KIẾN THỨC:** Tự động tải bộ lệnh từ `skills/media/infographic_specialist.md` vào trí nhớ tạm thời. Trợ lý KHÔNG ĐƯỢC làm theo ý thích cá nhân, phải làm 100% tuân thủ các Khối Cấu Trúc quy định tại tệp Specialist trên.
 - 🚨 **KHỞI TẠO TIỀN TRẠM (MANDATORY):** Để đảm bảo không bao giờ lỗi "File not found", hệ thống thực hiện tạo sẵn rễ thư mục chuyên biệt:
@@ -30,7 +43,7 @@ description: Lệnh phân tích và thiết kế đồ hoạ dài (Infographic) 
 ### Bước 3: Động cơ Kết xuất Kỹ thuât số (Camera Engine)
 Thực thi lệnh Console tương tác với Javascript:
 ```bash
-node scripts/html_infographic_engine.js --path "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic.html" --ticketId "[Ticket_ID]"
+node scripts/html_infographic_engine.js --path "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic/infographic.html" --ticketId "[Ticket_ID]"
 ```
 
 ### Bước 4: Đồng bộ Thành phẩm lên Cloud

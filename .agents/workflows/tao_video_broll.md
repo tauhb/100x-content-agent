@@ -11,6 +11,19 @@ description: Lệnh kích hoạt Đặc nhiệm Video Ngắn KHÔNG THOẠI (B-R
 
 ## 🔀 Quy trình Thực thi Hệ thống
 
+### Bước 0: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
+Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau:
+```bash
+cat database/brand_config.json
+```
+Trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `founder`
+- `BRAND_HANDLE` = `brand_identity.handle`
+- `ACCENT_COLOR` = `brand_identity.colors.accent`
+- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+
+> ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên.
+
 ### Bước 1: Sáng Tạo Nội Dung Cốt Lõi (Lõi Tri Thức)
 - Kiểm tra xem Ticket ID đã có file `master_content.md` hay chưa.
 - **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.

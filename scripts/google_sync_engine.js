@@ -114,7 +114,7 @@ async function syncApprovedIdeasDown() {
 /**
  * 3. Đẩy thành phẩm (Caption/Media) lên Cloud (Tab Content Pipeline)
  */
-async function pushResultToPipeline(ticketId, format, caption, mediaPath, sourceIdeaId) {
+async function pushResultToPipeline(ticketId, format, caption, mediaPath, sourceIdeaId, channel = '', postTime = '') {
   console.log(`🔄 Đang nộp thành phẩm [${ticketId}] lên Cloud...`);
   try {
     const payload = {
@@ -123,7 +123,9 @@ async function pushResultToPipeline(ticketId, format, caption, mediaPath, source
       format,
       caption,
       mediaPath,
-      sourceIdeaId
+      sourceIdeaId,
+      channel,
+      postTime
     };
     const response = await axios.post(GOOGLE_SHEET_APP_URL, payload);
     if (response.data === "Success") {
@@ -134,11 +136,27 @@ async function pushResultToPipeline(ticketId, format, caption, mediaPath, source
   }
 }
 
+/**
+ * 5. Kéo ý tưởng pending từ Idea Hub (dùng cho Schedule Autopilot)
+ */
+async function getPendingIdeas(limit = 10) {
+  try {
+    const response = await axios.get(`${GOOGLE_SHEET_APP_URL}?action=get_pending_ideas&limit=${limit}`);
+    const data = response.data;
+    if (!Array.isArray(data)) return [];
+    return data;
+  } catch (error) {
+    console.error('❌ Lỗi getPendingIdeas:', error.message);
+    return [];
+  }
+}
+
 // Export để các script khác sử dụng
 module.exports = {
   syncIdeasUp,
   syncApprovedIdeasDown,
   pushResultToPipeline,
+  getPendingIdeas,
   syncSettingsUp
 };
 

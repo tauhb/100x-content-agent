@@ -2,7 +2,7 @@ const puppeteer = require('puppeteer');
 const fs = require('fs');
 const path = require('path');
 const { saveDeliverableAndPrunePipeline } = require('./utils/inventory_manager');
-const { getAssetForImageEngine } = require('./utils/image_asset_pipeline');
+const { getAssetForImageEngine, resolveAssetToBase64 } = require('./utils/image_asset_pipeline');
 
 async function renderDynamicCarousel(inputHtmlPath) {
     if (!fs.existsSync(inputHtmlPath)) {
@@ -137,13 +137,8 @@ async function renderDynamicCarousel(inputHtmlPath) {
         let bgImgCss = '';
         if (slideData.bgKeyword) {
             try {
-                let bgUrl = await getAssetForImageEngine(slideData.bgKeyword, 'image_stock');
-                if (bgUrl && bgUrl.startsWith('file://')) {
-                    const localPath = decodeURI(bgUrl.slice(7));
-                    const ext = path.extname(localPath).substring(1) || 'jpg';
-                    const data = fs.readFileSync(localPath, 'base64');
-                    bgImgCss = `background-image: url('data:image/${ext};base64,${data}'); background-size: cover; background-position: center; opacity: 0.15; filter: blur(30px) brightness(0.5); width: 100%; height: 100%;`;
-                }
+                const bgResolved = resolveAssetToBase64(await getAssetForImageEngine(slideData.bgKeyword, 'image_stock'));
+                if (bgResolved) bgImgCss = `background-image: url('${bgResolved}'); background-size: cover; background-position: center; opacity: 0.15; filter: blur(30px) brightness(0.5); width: 100%; height: 100%;`;
             } catch (e) {
                console.log("-> Lỗi kết xuất Background cho Slide này.");
             }
@@ -175,13 +170,8 @@ async function renderDynamicCarousel(inputHtmlPath) {
         for (const req of imgRequests) {
             let base64Src = '';
             try {
-                const assetUrl = await getAssetForImageEngine(req.keyword, req.vault);
-                if (assetUrl && assetUrl.startsWith('file://')) {
-                    const localPath = decodeURI(assetUrl.slice(7));
-                    const ext = path.extname(localPath).substring(1) || 'jpg';
-                    const data = fs.readFileSync(localPath, 'base64');
-                    base64Src = `data:image/${ext};base64,${data}`;
-                }
+                const resolved = resolveAssetToBase64(await getAssetForImageEngine(req.keyword, req.vault));
+                if (resolved) base64Src = resolved;
             } catch(e) {
                 console.log(`[Cảnh báo] Lỗi truy xuất ${req.vault} cho keyword "${req.keyword}"`);
             }
@@ -199,15 +189,8 @@ async function renderDynamicCarousel(inputHtmlPath) {
                 const keyword = keywordMatch[1];
                 let imgSrc = 'https://dummyimage.com/600x400/333/fff&text=Loading';
                 try {
-                    const assetUrl = await getAssetForImageEngine(keyword, 'image_stock');
-                    if (assetUrl && assetUrl.startsWith('file://')) {
-                        const localPath = decodeURI(assetUrl.slice(7));
-                        const ext = path.extname(localPath).substring(1) || 'jpg';
-                        const data = fs.readFileSync(localPath, 'base64');
-                        imgSrc = `data:image/${ext};base64,${data}`;
-                    } else if (assetUrl && assetUrl.startsWith('http')) {
-                        imgSrc = assetUrl;
-                    }
+                    const resolved = resolveAssetToBase64(await getAssetForImageEngine(keyword, 'image_stock'));
+                    if (resolved) imgSrc = resolved;
                 } catch(e) {}
                 slideHtml = slideHtml.replace(tag, `<img src="${imgSrc}" class="ai-illustration" />`);
             }

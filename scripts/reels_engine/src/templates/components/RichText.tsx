@@ -3,15 +3,11 @@ import { spring, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 import { loadFont as loadInter } from "@remotion/google-fonts/Inter";
 import { loadFont as loadPlayfair } from "@remotion/google-fonts/PlayfairDisplay";
 
-// @ts-ignore
-import brandConfig from '../../brand_config.json';
-
 export const RichText: React.FC<{ text: string; staggerDelay?: number; brandAccent?: string; themeType?: 'headline' | 'body' }> = ({ text, staggerDelay = 2, brandAccent, themeType = 'body' }) => {
     const frame = useCurrentFrame();
     const { fps } = useVideoConfig();
 
-    const colors = brandConfig.brand_identity?.colors || {};
-    const finalAccent = brandAccent || colors.accent || '#B6FF00';
+    const finalAccent = brandAccent || '#B6FF00';
 
     // --- v6.1: Load Font TRỰC TIẾP tại Component (Fix quy trình: Font luôn sẵn sàng) ---
     const { fontFamily: primaryFont } = loadInter();
