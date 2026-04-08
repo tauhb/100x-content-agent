@@ -8,10 +8,11 @@ media_output/**
 !media_output/**/.gitkeep
 !media_output/.gitkeep
 
-media-input/**
-!media-input/**/
-!media-input/**/.gitkeep
-!media-input/.gitkeep
+# media-input is now tracked as per user request
+# media-input/**
+# !media-input/**/
+# !media-input/**/.gitkeep
+# !media-input/.gitkeep
 
 *.log
 debug_*.txt
