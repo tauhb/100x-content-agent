@@ -8,10 +8,13 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "postinstall": "node -e \"const fs=require('fs'); if(!fs.existsSync('.env')) { fs.copyFileSync('.env.example','.env'); console.log('✅ Da tao file .env tu dong.'); }\" && cd scripts/reels_engine && npm install",
-    "reels": "node scripts/reels_engine.js",
+    "setup": "node -e \"const fs=require('fs'); if(!fs.existsSync('.env')) { fs.copyFileSync('.env.example','.env'); console.log('✅ Da tao file .env tu dong.'); }\" && cd scripts/reels_engine && npm install",
+    "postinstall": "npm run setup",
+    "reels": "cross-env NODE_OPTIONS=\"--max-old-space-size=4096\" node scripts/reels_engine.js",
     "image": "node scripts/image_engine.js",
     "carousel": "node scripts/carousel_engine.js",
+    "infographic": "node scripts/html_infographic_engine.js",
+    "broll": "node scripts/html_broll_engine.js",
     "publish": "node scripts/publish_engine_pw.js"
   },
   "keywords": [],
@@ -29,5 +32,8 @@
     "playwright": "^1.58.2",
     "puppeteer": "^24.40.0",
     "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }

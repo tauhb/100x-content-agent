@@ -8,7 +8,7 @@ const axios = require('axios');
  * Sử dụng Puppeteer vờ làm người dùng truy cập DuckDuckGo Images để săn ảnh gốc thay vì trả tiền API.
  */
 
-require('dotenv').config({ path: path.join(__dirname, '../../.env') });
+require('dotenv').config({ path: path.join(__dirname, '..', '..', '.env') });
 
 /**
  * fetchAndSaveImage: Tự động truy xuất kho ảnh PEXELS thông qua API Key.
@@ -70,14 +70,14 @@ async function getAssetForImageEngine(keyword, media_source) {
     // Nếu AI yêu cầu đích danh một thư mục:
     let targetDir = '';
     if (media_source === 'personal_image' || media_source === 'personal_library') {
-        targetDir = path.join(__dirname, '../../media-input/personal_image');
+        targetDir = path.join(__dirname, '..', '..', 'media-input', 'personal_image');
     } else if (media_source === 'celebrity_vault' || media_source === 'celebrity_image') {
-        targetDir = path.join(__dirname, '../../media-input/celebrity_image');
+        targetDir = path.join(__dirname, '..', '..', 'media-input', 'celebrity_image');
     } else if (media_source === 'image_stock') {
-        targetDir = path.join(__dirname, '../../media-input/image_stock');
+        targetDir = path.join(__dirname, '..', '..', 'media-input', 'image_stock');
     } else {
         // Fallback for old payloads
-        targetDir = path.join(__dirname, '../../media-input/image_stock');
+        targetDir = path.join(__dirname, '..', '..', 'media-input', 'image_stock');
     }
 
     // Quét Thư Mục Đích:
@@ -103,8 +103,14 @@ async function getAssetForImageEngine(keyword, media_source) {
         }
     }
     
-    // Chiến thuật cuối cùng: Rớt đài mọi phòng ban!
-    console.log(`[Asset Pipeline] 🚨 Báo Động! Thư mục ${media_source} trống trơn và AI quên chưa Auto-Generate! Mượn tạm Unsplash Backup.`);
+    // Chiến thuật cuối cùng: Rớt đài mọi phòng ban! Gọi Pexels API
+    console.log(`[Asset Pipeline] 🚨 Báo Động! Thư mục ${media_source} trống trơn! Khởi động Fallback lấy ảnh từ Pexels cho keyword: ${cleanKeyword}`);
+    const pexelsFallback = await fetchAndSaveImage(cleanKeyword);
+    if (pexelsFallback) {
+        return pexelsFallback;
+    }
+
+    console.log(`[Asset Pipeline] ❌ Pexels cũng thất bại. Mượn tạm Unsplash Backup cuối cùng.`);
     return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
 }
 

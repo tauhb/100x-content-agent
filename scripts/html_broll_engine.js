@@ -17,7 +17,7 @@ for (let i = 0; i < args.length; i++) {
 }
 
 async function getLocalMedia(type, keyword) {
-    const dir = path.join(__dirname, `../media-input/${type}`);
+    const dir = path.join(__dirname, '..', 'media-input', type);
     if (!fs.existsSync(dir)) return null;
 
     let files = fs.readdirSync(dir).filter(f => !f.startsWith('.'));
@@ -45,7 +45,7 @@ async function renderBrollEngine(htmlPath) {
     let rawInputHtml = fs.readFileSync(htmlPath, 'utf8');
 
     // Nạp Brand Config
-    const brandConfigPath = path.join(__dirname, '../database/brand_config.json');
+    const brandConfigPath = path.join(__dirname, '..', 'database', 'brand_config.json');
     let brandConfig = {};
     if (fs.existsSync(brandConfigPath)) brandConfig = JSON.parse(fs.readFileSync(brandConfigPath, 'utf8'));
 
@@ -55,8 +55,8 @@ async function renderBrollEngine(htmlPath) {
     // Xử lý nạp Avatar Base64 Thần tốc
     let avatarBase64 = 'https://dummyimage.com/200/333/fff&text=Avatar';
     try {
-        let avatarPath = path.join(__dirname, '../media-input/avatar.png');
-        if (!fs.existsSync(avatarPath)) avatarPath = path.join(__dirname, '../media-input/avatar.jpg');
+        let avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.png');
+        if (!fs.existsSync(avatarPath)) avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.jpg');
         if (fs.existsSync(avatarPath)) {
             const ext = path.extname(avatarPath).substring(1);
             const data = fs.readFileSync(avatarPath, 'base64');
@@ -115,7 +115,7 @@ async function renderBrollEngine(htmlPath) {
                 width: 1080px; height: 1920px; position: relative;
             }
             main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 1080px; height: 1920px; }
-            em, i, .highlight-text { font-family: var(--font-secondary) !important; font-style: italic !important; background: transparent !important; color: var(--brand-accent) !important; font-weight: 800 !important; }
+            em, i, .highlight-text { font-family: var(--font-secondary) !important; font-style: italic !important; background: transparent !important; color: var(--brand-accent) !important; margin: 0 5px; font-weight: inherit !important; }
             
             /* LÕI HỆ THỐNG: WATERMARK */
             #system-watermark {
@@ -199,7 +199,7 @@ async function renderBrollEngine(htmlPath) {
 
     // Săn Video và Nhạc
     console.log(`[B-Roll Engine] Đang tìm Video Broll và Music...`);
-    const finalBgVideo = await getLocalMedia('background-video', metadata.brollKeyword) || path.join(__dirname, '../media-input/background-video/default.mp4'); 
+    const finalBgVideo = await getLocalMedia('background-video', metadata.brollKeyword) || path.join(__dirname, '..', 'media-input', 'background-video', 'default.mp4'); 
     const finalBgMusic = await getLocalMedia('background-music', metadata.musicKeyword);
     
     if (!fs.existsSync(finalBgVideo)) {
@@ -219,7 +219,7 @@ async function renderBrollEngine(htmlPath) {
         // [1:v] = overlay_base.png
         // [2:v] = overlay_cta.png
 
-        const filterStr = `[1:v]format=rgba,fade=in:st=0:d=1:alpha=1[base_faded];[0:v]crop=1080:1920:exact=0[bg_cropped];[bg_cropped][base_faded]overlay=shortest=1[middle];[middle][2:v]overlay=enable='gte(t,2)'[outv]`;
+        const filterStr = `[1:v]format=rgba,fade=in:st=0:d=1:alpha=1[base_faded];[0:v]scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920[bg_cropped];[bg_cropped][base_faded]overlay=shortest=1[middle];[middle][2:v]overlay=enable='gte(t,2)'[outv]`;
 
         const ffmpegCmd = `"${ffmpegStatic}" -hide_banner -loglevel error -stream_loop -1 -i "${finalBgVideo}" -loop 1 -i "${overlayBasePng}" -loop 1 -i "${overlayCtaPng}" ${audioInput} -filter_complex "${filterStr}" -map "[outv]" ${mapAudio} -t 8 -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -y "${finalOutput}"`;
         

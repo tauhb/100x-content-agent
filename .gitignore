@@ -18,4 +18,13 @@ debug_*.txt
 error*.txt
 draft_*.txt
 draft_*.html
-disabled_workflows/
+# Database & Private Data
+database/*.json
+!database/brand_config.json
+!database/my_accounts.json
+database/history/
+database/scraped_temp/
+
+# Browser & Sessions
+browser_data/
+scripts/tmp_render/

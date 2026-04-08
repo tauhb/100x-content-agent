@@ -6,26 +6,37 @@ description: Lệnh phân tích và thiết kế đồ hoạ dài (Infographic) 
 
 **Mục tiêu:** Kích hoạt quá trình tạo đồ hoạ siêu dài (Infographic). Hệ thống AI tự động sinh file mã nguồn `infographic.html` thay vì thiết kế đồ họa tĩnh thông qua API, giúp bảo tồn hiển thị chữ nội dung sắc nét 100%.
 
+> **ANTI-PLANNING DIRECTIVE:** Đây là một chuỗi hành động Tự Động (Automation) tuyến tính. AI bắt buộc thực thi ngay lập tức qua Run Command, tuyệt đối KHÔNG ĐƯỢC vào chế độ Planning Mode và KHÔNG TẠO/SỬA file Implementation Plan. Không yêu cầu người dùng xác nhận kế hoạch.
+
 ## 🔀 Quy trình Thực thi
 
-### Bước 1: Sao chép Caption gốc & Cấp phát Ticket
-- 🚨 **Hệ thống truy xuất tệp lệnh `master_content.md` đang ở trạng thái Cần Xử Lý.** Nếu có mã Ticket xác định (VD: `--id ticket_1234`), sử dụng thư mục của Ticket đó tại `media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]`. 
-- **Sao lưu Caption nguyên bản:** AI có nhiệm vụ trực tiếp copy toàn bộ chuỗi nội dung văn bản trong file `master_content.md` và viết đè (rewrite) vào tệp `caption.txt` tại vị trí lưu trữ thuộc Bundle. Tuân thủ định dạng chuẩn, loại bỏ các cụm Header dạng kỹ thuật số (`## 1. MỞ BÀI...`). Tuyệt đối giữ nguyên không tóm tắt.
+### Bước 1: Sáng Tạo Nội Dung Cốt Lõi (Lõi Tri Thức)
+- Kiểm tra xem Ticket ID đã có file `master_content.md` hay chưa.
+- **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.
+- **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng nội dung gốc `master_content.md`.
 
-### Bước 2: AI Code Generation (Khởi tạo Cấu trúc Trực quan)
-- AI phân tách bố cục bài viết để viết duy nhất một File Giao diện có định dạng `.html` tại vị trí lưu trữ với tên: `infographic.html`. (Ví dụ đường dẫn File đích: `media_output/2026-04-06/Facebook/[Ticket_ID]/infographic.html`).
-- File `infographic.html` **chỉ chứa mã HTML/CSS nội bộ bên trong thẻ `<main>`** (Không cần thiết lập `<html>` hay `<head>`, vì máy ảnh đã bọc lớp Wrapper nền).
-- **Luật Thiết Kế Không Gian (Spatial Reasoning & Typography):** 
-   - **Tối ưu Bố cục:** Kích thước bức ảnh bị khóa vĩnh viễn ở tỷ lệ 4:5 (Rộng 1080px x Cao 1350px). Hệ thống Header/Footer đã chiếm khoảng 400px. Do đó, khu vực `<main>` chỉ có tối đa 950px chiều cao. **TUYỆT ĐỐI KHÔNG XẾP CÁC KHỐI THEO 1 CỘT DỌC**. Bắt buộc tính toán số lượng thông tin và sử dụng `CSS Grid` (Ví dụ `grid-template-columns: repeat(2, 1fr)`) hoặc thu nhỏ thông số phông chữ (`calc`) sao cho các khối nằm khít khung.
-   - **Quy chuẩn Từ khóa:** Đối với các từ khóa bôi đen mấu chốt, BẮT BUỘC sử dụng thẻ `<i>` hoặc `<em>`. Hệ thống đã cài đặt sẵn Typography riêng biệt (Phông chữ nhấn, in nghiêng, màu Brand Accent và nền trong suốt) cho thẻ này. Không sử dụng background color.
-   - **Tông màu nền:** Dùng thiết kế Dark Mode `var(--brand-main-bg, #0b0c10)` kết hợp với đường nhấn mã từ biến `var(--brand-accent)` thay vì dùng màu tĩnh. Tuyệt đối tuân thủ giao diện White Label.
+### Bước 2: Phát Động Tối Cao Lệnh Tạo Infographic (Infographic Specialist)
+- **TÍCH HỢP KIẾN THỨC:** Tự động tải bộ lệnh từ `skills/media/infographic_specialist.md` vào trí nhớ tạm thời. Trợ lý KHÔNG ĐƯỢC làm theo ý thích cá nhân, phải làm 100% tuân thủ các Khối Cấu Trúc quy định tại tệp Specialist trên.
+- 🚨 **KHỞI TẠO TIỀN TRẠM (MANDATORY):** Để đảm bảo không bao giờ lỗi "File not found", hệ thống thực hiện tạo sẵn rễ thư mục chuyên biệt:
+  ```bash
+  mkdir -p "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic" && touch "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic/infographic.html" "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic/caption.txt"
+  ```
+- **Thực thi thiết kế:**
+  1. Ghi 100% nội dung bài viết từ `master_content.md` vào `infographic/caption.txt`.
+  2. Phân tích nội dung và DÙNG CÁC KHỐI LEGO (Skeletons) trong `infographic_specialist.md` để dệt nội dung.
+  3. Viết Mã nguồn `infographic.html` xả thẳng vào file `infographic/infographic.html`.
+- **Kích thước ảnh:** Khóa ở tỷ lệ 4:5 (1080px x 1350px).
 
 ### Bước 3: Động cơ Kết xuất Kỹ thuât số (Camera Engine)
 Thực thi lệnh Console tương tác với Javascript:
 ```bash
 node scripts/html_infographic_engine.js --path "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic.html" --ticketId "[Ticket_ID]"
 ```
-Hệ thống Puppeteer tự động xử lý thiết kế và lưu trữ tại cùng địa chỉ với tên hiển thị là `media.png`.
+
+### Bước 4: Đồng bộ Thành phẩm lên Cloud
+// turbo
+- Thực thi: `node -e "require('./scripts/google_sync_engine.js').pushResultToPipeline('[Ticket_ID]', 'Infographic', '[Nội dung Caption]', '[Link_Media]', '[Source_Idea_ID]')"`.
+- Mục tiêu: Để Quản trị viên có thể xem bản đồ hoạ chuyên sâu và duyệt đăng bài ngay trên Google Sheets.
 
 ## 📤 Báo cáo Sau Cùng
 Đưa ra thông báo sau khi hoàn thiện với cấu trúc hiển thị đường dẫn rõ ràng để người dùng click:

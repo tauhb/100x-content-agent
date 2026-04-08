@@ -13,7 +13,7 @@ Hệ thống BẮT BUỘC thực hiện theo thứ tự:
 2. Sau đó mới tiến hành cào dữ liệu từ URL đó cùng toàn bộ danh sách mục tiêu đã lưu.
 
 Nếu Quản trị viên chỉ gõ `/research_ideas` (Không kèm URL), Hệ thống sử dụng toàn bộ 
-danh sách URL đã có trong `database/target_pages.json`.
+ danh sách URL đã có trong `database/target_pages.json`.
 
 ## 🔀 Quy trình Thực thi Hệ thống
 
@@ -27,10 +27,15 @@ danh sách URL đã có trong `database/target_pages.json`.
 - Hệ thống ứng dụng bộ sàng lọc 5 Trụ cột x 5 Góc nhìn của Ma trận cốt lõi. Mọi dữ liệu nguyên bản được bóc tách nội hàm (Insight) và tạo bản sao phản biện thành ý tưởng nội dung mới.
 - Dữ liệu ý tưởng được lưu vào Bảng tin chờ duyệt: `database/idea_bank.json`.
 
+### Bước 3: Đồng bộ Ý tưởng mới lên Cloud CMS
+// turbo
+- Thực thi: `node scripts/google_sync_engine.js --up`
+- Mục tiêu: Tự độ đẩy toàn bộ ý tưởng vừa cào và nhân bản được lên Google Sheets Tab `💡 IDEA HUB` để anh duyệt trên điện thoại.
+
 ## 📤 Báo cáo Kết quả
 Tóm tắt trên Khung Chat:
 - Số lượng URL đã quét.
 - Số lượng Ý tưởng mới được sinh ra.
-- Thông báo: *"Quản trị viên vui lòng gọi lệnh `/danh_sach_y_tuong` để xem Bảng điều khiển và phê duyệt các Ý tưởng đạt tiêu chuẩn."*
+- Thông báo: *"Quản trị viên vui lòng gọi lệnh `/danh_sach_y_tuong` để hoàn tất đồng bộ và duyệt các Ý tưởng mới trên Google Sheets."*
 
 // turbo-all

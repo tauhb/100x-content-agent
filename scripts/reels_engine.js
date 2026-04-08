@@ -69,14 +69,14 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
     console.log(`✅ [1/4] Đã nạp thành công ${timeline.length} phân cảnh (Scenes).`);
 
     // --- NEW: Fix CORS by converting branding to Base64 ---
-    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '../database/brand_config.json'), 'utf8'));
+    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'database', 'brand_config.json'), 'utf8'));
     const accentColor = brandConfig.brand_identity?.colors?.accent || '#B6FF00';
     let avatarBase64 = null;
     let logoBase64 = null;
 
     try {
-        let avatarPath = path.join(__dirname, '../media-input/avatar.png');
-        if (!fs.existsSync(avatarPath)) avatarPath = path.join(__dirname, '../media-input/avatar.jpg');
+        let avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.png');
+        if (!fs.existsSync(avatarPath)) avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.jpg');
         if (fs.existsSync(avatarPath)) {
             const avatarData = fs.readFileSync(avatarPath);
             avatarBase64 = `data:image/png;base64,${avatarData.toString('base64')}`;
@@ -108,7 +108,7 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
 
     // 1.5 Khởi động Trạm Phát Sóng Micro-Server thay thế Symlink độc hại
     const today = new Date().toISOString().split('T')[0];
-    const defaultDir = path.join(__dirname, `../media_output/${today}/default/reels`);
+    const defaultDir = path.join(__dirname, '..', 'media_output', today, 'default', 'reels');
     const outputDir = customOutputDir || defaultDir;
 
     if (!fs.existsSync(outputDir)) {
@@ -122,7 +122,7 @@ async function generateReels(timelineJsonPath, outputFileName = 'final_reels.mp4
 
     console.log(`📡 [Micro-Server] Khởi động Trạm Phát Sóng nội bộ tại cổng 9876...`);
     const mediaServerApp = await startMediaServer(9876, [
-        { prefix: '/media-input/', path: path.join(__dirname, '../media-input') },
+        { prefix: '/media-input/', path: path.join(__dirname, '..', 'media-input') },
         { prefix: '/ticket-assets/', path: ticketAssetsDir }
     ]);
 
@@ -309,7 +309,7 @@ if (require.main === module) {
             const idIndex = args.indexOf('--id');
             const ticketId = args[idIndex + 1];
 
-            const dbPath = path.join(__dirname, '../database/ideation_pipeline.json');
+            const dbPath = path.join(__dirname, '..', 'database', 'ideation_pipeline.json');
             const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
             const ticketIndex = db.findIndex(t => t.id === ticketId);
             const ticket = db[ticketIndex];
@@ -321,7 +321,7 @@ if (require.main === module) {
 
             const today = new Date().toISOString().split('T')[0];
             const channel = ticket.target_page || 'default';
-            const bundleDir = ticket.bundle_path ? path.join(__dirname, '..', ticket.bundle_path) : path.join(__dirname, `../media_output/${today}/${channel}/${ticketId}`);
+            const bundleDir = ticket.bundle_path ? path.join(__dirname, '..', ticket.bundle_path) : path.join(__dirname, '..', 'media_output', today, channel, ticketId);
 
             if (!fs.existsSync(bundleDir)) fs.mkdirSync(bundleDir, { recursive: true });
 

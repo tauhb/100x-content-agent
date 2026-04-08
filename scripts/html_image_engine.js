@@ -68,7 +68,7 @@ async function renderDynamicImage(inputHtmlPath) {
         resolvedImgData.push({ id: req.id, base64: base64Src });
     }
 
-    const brandConfigPath = path.join(__dirname, '../database/brand_config.json');
+    const brandConfigPath = path.join(__dirname, '..', 'database', 'brand_config.json');
     let brandConfig = {};
     if (fs.existsSync(brandConfigPath)) {
         brandConfig = JSON.parse(fs.readFileSync(brandConfigPath, 'utf8'));
@@ -84,15 +84,15 @@ async function renderDynamicImage(inputHtmlPath) {
         ? `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`
         : `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=${fontSecondarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`;
 
-    // Fetch Avatar (Personal Image) once for header/footer if needed
+    // Fetch Avatar specifically from media-input/avatar.jpg
     let avatarImgSrc = 'https://dummyimage.com/200/333/fff&text=Avatar';
     try {
-        const avatarUrl = await getAssetForImageEngine(founderName, 'personal_image');
-        if (avatarUrl && avatarUrl.startsWith('file://')) {
-            const localPath = decodeURI(avatarUrl.slice(7));
-            const ext = path.extname(localPath).substring(1) || 'jpg';
-            const data = fs.readFileSync(localPath, 'base64');
-            avatarImgSrc = `data:image/${ext};base64,${data}`;
+        const avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.jpg');
+        if (fs.existsSync(avatarPath)) {
+            const data = fs.readFileSync(avatarPath, 'base64');
+            avatarImgSrc = `data:image/jpeg;base64,${data}`;
+        } else {
+            console.warn('[Cảnh báo] Không tìm thấy media-input/avatar.jpg');
         }
     } catch (e) {
         console.error('[Cảnh báo] Lỗi bốc Avatar:', e.message);
@@ -120,6 +120,7 @@ async function renderDynamicImage(inputHtmlPath) {
     <html lang="vi">
     <head>
         <meta charset="UTF-8">
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
         <link href="https://fonts.googleapis.com/css2?${fontUrlParams}&display=swap" rel="stylesheet">
         <style>
             :root {
@@ -134,20 +135,20 @@ async function renderDynamicImage(inputHtmlPath) {
             
             #bgContainer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; }
 
-            /* Uniform Base Styling */
-            header { display: flex; align-items: center; padding: 35px 50px; border-bottom: 2px solid rgba(255,255,255,0.08); background: linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 100%); z-index: 10; height: 140px; }
-            .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--brand-accent); margin-right: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+            /* Uniform Base Styling (Absolute Overlay Reconstruction V8) */
+            header { position: absolute; top: 0; left: 0; width: 100%; display: flex; align-items: center; padding: 35px 50px; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%); z-index: 100; height: 160px; }
+            .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--brand-accent); margin-right: 25px; box-shadow: 0 4px 25px rgba(0,0,0,0.5); }
             .header-text { display: flex; flex-direction: column; justify-content: center; }
-            .founder-name { font-size: 34px; font-weight: 900; letter-spacing: -0.5px; color: #fff; line-height: 1.1; }
-            .handle { font-size: 24px; color: var(--brand-accent); font-weight: 600; margin-top: 5px; letter-spacing: 1px; }
+            .founder-name { font-size: 34px; font-weight: 900; letter-spacing: -0.5px; color: #fff; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+            .handle { font-size: 24px; color: var(--brand-accent); font-weight: 600; margin-top: 5px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
             
-            main { position: relative; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+            main { position: absolute; top: 0; left: 0; width: 1080px; height: 1350px; display: flex; flex-direction: column; overflow: hidden; z-index: 1; }
             
-            footer { height: 100px; padding: 25px 40px; border-top: 2px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.3); font-size: 22px; font-weight: 500; opacity: 0.8; z-index: 10; display: flex; align-items: center; justify-content: flex-end; }
+            footer { position: absolute; bottom: 0; left: 0; width: 100%; height: 100px; padding: 25px 40px; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); font-size: 22px; font-weight: 500; z-index: 100; display: flex; align-items: center; justify-content: flex-end; }
             .watermark-brand { color: #fff; font-family: var(--font-primary); font-size: 26px; font-weight: 700; letter-spacing: 2px; }
 
             /* Standard Typo Rules enforced globally */
-            em, i, .highlight-text { font-family: var(--font-secondary); font-style: italic; background: transparent !important; color: var(--brand-accent); font-weight: 800; }
+            em, i, .highlight-text { font-family: var(--font-secondary); font-style: italic; background: transparent !important; color: var(--brand-accent); margin: 0 5px; font-weight: inherit; }
         </style>
         ${payload.styles}
     </head>
@@ -204,7 +205,7 @@ async function renderDynamicImage(inputHtmlPath) {
         const idIndex = args.indexOf('--ticketId');
         const ticketId = args[idIndex + 1];
         
-        const dbPath = path.join(__dirname, '../database/ideation_pipeline.json');
+        const dbPath = path.join(__dirname, '..', 'database', 'ideation_pipeline.json');
         if (fs.existsSync(dbPath)) {
             const db = JSON.parse(fs.readFileSync(dbPath, 'utf8'));
             const ticketIndex = db.findIndex(t => t.id === ticketId);

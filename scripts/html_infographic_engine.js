@@ -11,7 +11,7 @@ async function renderDynamicInfographic(inputHtmlPath) {
     }
 
     const rawContentHtml = fs.readFileSync(inputHtmlPath, 'utf8');
-    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '../database/brand_config.json'), 'utf8'));
+    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'database', 'brand_config.json'), 'utf8'));
     const accentColor = brandConfig.brand_identity?.colors?.accent || '#B6FF00';
     const fontPrimary = brandConfig.brand_identity?.fonts?.primary || 'Inter';
     const fontPrimarySafe = fontPrimary.replace(/\s+/g, '+');
@@ -21,18 +21,29 @@ async function renderDynamicInfographic(inputHtmlPath) {
         ? `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`
         : `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=${fontSecondarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`;
     
-    // Fetch Avatar from personal_image
+    // Xử lý nạp Avatar Cá Nhân (avatar.jpg/png) - Ưu tiên hàng đầu
     const founderName = brandConfig.founder || 'System';
     let avatarImgSrc = 'https://dummyimage.com/200/333/fff&text=Avatar';
     try {
-        const bgImageUrl = await getAssetForImageEngine(founderName, 'personal_image');
-        if (bgImageUrl && bgImageUrl.startsWith('file://')) {
-            const localPath = decodeURI(bgImageUrl.slice(7));
-            const ext = path.extname(localPath).substring(1) || 'jpg';
-            const data = fs.readFileSync(localPath, 'base64');
+        let avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.png');
+        if (!fs.existsSync(avatarPath)) avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.jpg');
+        
+        if (fs.existsSync(avatarPath)) {
+            const ext = path.extname(avatarPath).substring(1);
+            const data = fs.readFileSync(avatarPath, 'base64');
             avatarImgSrc = `data:image/${ext};base64,${data}`;
-        } else if (bgImageUrl) {
-            avatarImgSrc = bgImageUrl;
+            console.log(`[Camera Engine] Đã nhận diện Avatar cá nhân: ${path.basename(avatarPath)}`);
+        } else {
+            // Fallback sang Asset Pipeline nếu không có file local
+            const bgImageUrl = await getAssetForImageEngine(founderName, 'personal_image');
+            if (bgImageUrl && bgImageUrl.startsWith('file://')) {
+                const localPath = decodeURI(bgImageUrl.slice(7));
+                const ext = path.extname(localPath).substring(1) || 'jpg';
+                const data = fs.readFileSync(localPath, 'base64');
+                avatarImgSrc = `data:image/${ext};base64,${data}`;
+            } else if (bgImageUrl) {
+                avatarImgSrc = bgImageUrl;
+            }
         }
     } catch (e) {
         console.error('[Cảnh báo] Lỗi kết xuất Avatar:', e.message);
@@ -95,8 +106,10 @@ async function renderDynamicInfographic(inputHtmlPath) {
                 font-family: var(--font-secondary); 
                 font-style: italic; 
                 color: var(--brand-accent); 
-                background: transparent !important; 
-                font-weight: 700;
+                background: transparent !important;
+                margin: 0 5px; 
+                font-weight: inherit; 
+            }
             }
         </style>
     </head>

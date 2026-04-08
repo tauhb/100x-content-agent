@@ -36,7 +36,7 @@ async function renderDynamicCarousel(inputHtmlPath) {
 
     console.log(`[Carousel Engine] Mổ xẻ thành công ${payload.slides.length} khối Slides. Bắt đầu Dập khuôn...`);
 
-    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '../database/brand_config.json'), 'utf8'));
+    const brandConfig = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'database', 'brand_config.json'), 'utf8'));
     const accentColor = brandConfig.brand_identity?.colors?.accent || '#B6FF00';
     const founderName = brandConfig.founder || 'System';
     const fontPrimary = brandConfig.brand_identity?.fonts?.primary || 'Inter';
@@ -47,15 +47,15 @@ async function renderDynamicCarousel(inputHtmlPath) {
         ? `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`
         : `family=${fontPrimarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=${fontSecondarySafe}:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900`;
 
-    // Fetch Avatar (Personal Image) once
+    // Fetch Avatar specifically from media-input/avatar.jpg
     let avatarImgSrc = 'https://dummyimage.com/200/333/fff&text=Avatar';
     try {
-        const avatarUrl = await getAssetForImageEngine(founderName, 'personal_image');
-        if (avatarUrl && avatarUrl.startsWith('file://')) {
-            const localPath = decodeURI(avatarUrl.slice(7));
-            const ext = path.extname(localPath).substring(1) || 'jpg';
-            const data = fs.readFileSync(localPath, 'base64');
-            avatarImgSrc = `data:image/${ext};base64,${data}`;
+        const avatarPath = path.join(__dirname, '..', 'media-input', 'avatar.jpg');
+        if (fs.existsSync(avatarPath)) {
+            const data = fs.readFileSync(avatarPath, 'base64');
+            avatarImgSrc = `data:image/jpeg;base64,${data}`;
+        } else {
+            console.warn('[Cảnh báo] Không tìm thấy media-input/avatar.jpg');
         }
     } catch (e) {
         console.error('[Cảnh báo] Lỗi bốc Avatar:', e.message);
@@ -72,6 +72,7 @@ async function renderDynamicCarousel(inputHtmlPath) {
     <html lang="vi">
     <head>
         <meta charset="UTF-8">
+        <script src="https://unpkg.com/@phosphor-icons/web"></script>
         <link href="https://fonts.googleapis.com/css2?${fontUrlParams}&display=swap" rel="stylesheet">
         <style>
             :root {
@@ -85,20 +86,20 @@ async function renderDynamicCarousel(inputHtmlPath) {
             
             #bgContainer { position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; }
 
-            /* Uniform Base Styling */
-            header { display: flex; align-items: center; padding: 25px 45px; border-bottom: 2px solid rgba(255,255,255,0.08); background: linear-gradient(180deg, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 100%); z-index: 10; }
-            .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--brand-accent); margin-right: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+            /* Uniform Base Styling (Absolute Overlay Reconstruction) */
+            header { position: absolute; top: 0; left: 0; width: 100%; display: flex; align-items: center; padding: 25px 45px; background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0) 100%); z-index: 100; height: 160px; }
+            .avatar { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 4px solid var(--brand-accent); margin-right: 25px; box-shadow: 0 4px 25px rgba(0,0,0,0.5); }
             .header-text { display: flex; flex-direction: column; }
-            .founder-name { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; color: #fff; line-height: 1.1; }
-            .handle { font-size: 22px; color: var(--brand-accent); font-weight: 600; margin-top: 5px; letter-spacing: 1px; }
+            .founder-name { font-size: 32px; font-weight: 900; letter-spacing: -0.5px; color: #fff; line-height: 1.1; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
+            .handle { font-size: 22px; color: var(--brand-accent); font-weight: 600; margin-top: 5px; letter-spacing: 1px; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
             
-            main { position: relative; flex: 1; display: flex; flex-direction: column; }
+            main { position: absolute; top: 0; left: 0; width: 1080px; height: 1080px; display: flex; flex-direction: column; overflow: hidden; background-color: #0b0c10; z-index: 1; }
             
-            footer { padding: 30px; text-align: center; border-top: 2px solid rgba(255,255,255,0.08); background: rgba(0,0,0,0.2); font-size: 20px; font-weight: 500; opacity: 0.6; z-index: 10; }
+            footer { position: absolute; bottom: 0; left: 0; width: 100%; padding: 0 30px; height: 100px; text-align: center; background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 100%); font-size: 20px; font-weight: 500; z-index: 100; display: flex; align-items: center; justify-content: center; }
             #footer-pagenum { font-weight: 700; color: #fff; }
 
             /* Standard Typo Rules enforced globally */
-            em, i, .highlight-text { font-family: var(--font-secondary); font-style: italic; background: transparent !important; color: var(--brand-accent); font-weight: 800; }
+            em, i, .highlight-text { font-family: var(--font-secondary); font-style: italic; background: transparent !important; color: var(--brand-accent); margin: 0 5px; font-weight: inherit; }
             .ai-illustration { width: 100%; height: 100%; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.1); }
         </style>
         ${payload.styles}
@@ -149,6 +150,48 @@ async function renderDynamicCarousel(inputHtmlPath) {
         }
 
         let slideHtml = slideData.html;
+        
+        // 1. New Logic: Handle [data-img-vault] inside slides
+        const tempDiv = await renderPage.evaluateHandle((html) => {
+            const div = document.createElement('div');
+            div.innerHTML = html;
+            return div;
+        }, slideHtml);
+
+        const imgRequests = await renderPage.evaluate((div) => {
+            const vaultElements = Array.from(div.querySelectorAll('[data-img-vault]'));
+            return vaultElements.map((el, index) => {
+                const uniqueId = 'img-inj-' + index;
+                el.setAttribute('data-inj-id', uniqueId);
+                return {
+                    id: uniqueId,
+                    vault: el.getAttribute('data-img-vault'),
+                    keyword: el.getAttribute('data-keyword') || ''
+                };
+            });
+        }, tempDiv);
+
+        const resolvedImgData = [];
+        for (const req of imgRequests) {
+            let base64Src = '';
+            try {
+                const assetUrl = await getAssetForImageEngine(req.keyword, req.vault);
+                if (assetUrl && assetUrl.startsWith('file://')) {
+                    const localPath = decodeURI(assetUrl.slice(7));
+                    const ext = path.extname(localPath).substring(1) || 'jpg';
+                    const data = fs.readFileSync(localPath, 'base64');
+                    base64Src = `data:image/${ext};base64,${data}`;
+                }
+            } catch(e) {
+                console.log(`[Cảnh báo] Lỗi truy xuất ${req.vault} cho keyword "${req.keyword}"`);
+            }
+            resolvedImgData.push({ id: req.id, base64: base64Src });
+        }
+
+        // Apply injections to slideHtml
+        slideHtml = await renderPage.evaluate((div) => div.innerHTML, tempDiv);
+
+        // 2. Legacy Logic: <ai-image>
         const aiTags = slideHtml.match(/<ai-image\s+keyword=["'][^"']+["']\s*><\/ai-image>/g) || [];
         for (const tag of aiTags) {
             const keywordMatch = tag.match(/keyword=["']([^"']+)["']/);
@@ -170,11 +213,26 @@ async function renderDynamicCarousel(inputHtmlPath) {
             }
         }
 
-        await renderPage.evaluate((htmlContent, bgStyles, pageIndex) => {
-            document.getElementById('slideContainer').innerHTML = htmlContent;
+        await renderPage.evaluate((htmlContent, bgStyles, pageIndex, imgInjections) => {
+            const container = document.getElementById('slideContainer');
+            container.innerHTML = htmlContent;
             document.getElementById('bgContainer').style.cssText = bgStyles || 'background-image: none;';
             document.getElementById('footer-pagenum').innerText = pageIndex;
-        }, slideHtml, bgImgCss, (i + 1));
+
+            // Inject Vault Images
+            imgInjections.forEach(img => {
+                var el = container.querySelector('[data-inj-id="' + img.id + '"]');
+                if (el && img.base64) {
+                    if (el.tagName.toLowerCase() === 'img') {
+                        el.src = img.base64;
+                    } else {
+                        el.style.backgroundImage = "url('" + img.base64 + "')";
+                        el.style.backgroundSize = 'cover';
+                        el.style.backgroundPosition = 'center';
+                    }
+                }
+            });
+        }, slideHtml, bgImgCss, (i + 1), resolvedImgData);
         
         await new Promise(r => setTimeout(r, 50));
 

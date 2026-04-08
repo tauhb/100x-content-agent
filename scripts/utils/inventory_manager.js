@@ -10,9 +10,9 @@ const path = require('path');
 function saveDeliverableAndPrunePipeline(ticketId, deliveryFormat, mediaLink = null) {
     if (!ticketId) return;
 
-    const pipelinePath = path.join(__dirname, '../../database/ideation_pipeline.json');
-    const inventoryPath = path.join(__dirname, '../../database/post_inventory.json');
-    const ideaBankPath = path.join(__dirname, '../../database/idea_bank.json');
+    const pipelinePath = path.join(__dirname, '..', '..', 'database', 'ideation_pipeline.json');
+    const inventoryPath = path.join(__dirname, '..', '..', 'database', 'post_inventory.json');
+    const ideaBankPath = path.join(__dirname, '..', '..', 'database', 'idea_bank.json');
 
     // Make sure JSON DBs exist
     if (!fs.existsSync(inventoryPath)) fs.writeFileSync(inventoryPath, '[]');
@@ -32,7 +32,7 @@ function saveDeliverableAndPrunePipeline(ticketId, deliveryFormat, mediaLink = n
             // Lấy thông tin nguồn
             if (ticket.source_idea_id) sourceIdeaId = ticket.source_idea_id;
             if (ticket.target_page) targetChannels = [ticket.target_page.toLowerCase()];
-            bundlePath = ticket.bundle_path || `media_output/unknown_date/unknown_channel/${ticketId}`;
+            bundlePath = ticket.bundle_path || path.join('media_output', 'unknown_date', 'unknown_channel', ticketId);
             
             // Xóa rác khỏi Băng chuyền Zero-Garbage
             pipeline.splice(tIndex, 1);

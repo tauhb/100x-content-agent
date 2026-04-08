@@ -28,7 +28,7 @@ async function handleLoginWait(page, targetUrl) {
 
 async function markAsPublished(post, inventory, inventoryPath, page) {
     await new Promise(r => setTimeout(r, 10000));
-    await page.screenshot({ path: path.join(__dirname, '../media_output/publish_pw_success.png') });
+    await page.screenshot({ path: path.join(__dirname, '..', 'media_output', 'publish_pw_success.png') });
     console.log("📸 Đã chụp ảnh xác nhận tại media_output/publish_pw_success.png");
 
     post.status = "published";

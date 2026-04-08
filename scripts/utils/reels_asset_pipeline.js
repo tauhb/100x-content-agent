@@ -60,7 +60,7 @@ async function getPexelsBroll(query, sceneIndex, destDir) {
  * 📂 1.5. LOCAL VIDEO: Trích xuất nền Video Cá nhân
  */
 async function getLocalBroll(query, sceneIndex) {
-    const dir = path.join(__dirname, '../../media-input/background-video');
+    const dir = path.join(__dirname, '..', '..', 'media-input', 'background-video');
     if (!fs.existsSync(dir)) {
         console.log(`[Local Video] Thư mục media-input/background-video chưa tồn tại.`);
         return null;
@@ -185,7 +185,7 @@ async function getHeyGenAvatar(text, sceneIndex, destDir) {
 }
 
 async function getLocalMusic() {
-    const musicDir = path.join(__dirname, '../../media-input/background-music');
+    const musicDir = path.join(__dirname, '..', '..', 'media-input', 'background-music');
     if (!fs.existsSync(musicDir)) return null;
 
     const files = fs.readdirSync(musicDir).filter(f => !f.startsWith('.') && (f.toLowerCase().endsWith('.mp3') || f.toLowerCase().endsWith('.wav') || f.toLowerCase().endsWith('.m4a')));

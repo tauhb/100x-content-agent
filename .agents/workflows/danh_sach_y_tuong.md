@@ -1,66 +1,32 @@
 ---
-description: Lệnh thu thập Bảng Điều Khiển CMS (Dashboard hiển thị Ý Tưởng) để thẩm định nội dung trực tiếp trên giao diện hệ thống.
+description: Lệnh đồng bộ và truy cập Bảng Điều Khiển CMS (Google Sheets Dashboard) để kiểm duyệt nội dung.
 ---
 
 # Lệnh: /danh_sach_y_tuong
 
-**Mục tiêu:** Kích hoạt chế độ "Trạm Kiểm Duyệt CMS" nội bộ. Hệ thống sẽ truy xuất dữ liệu từ Kho ý tưởng (Idea Bank) và khởi tạo một Bảng Thông tin trực quan lên file tĩnh (Dashboard vật lý), hỗ trợ Quản trị viên theo dõi, phê duyệt hoặc loại bỏ dự án với trải nghiệm tốt nhất trên VS Code.
+**Mục tiêu:** Kích hoạt chế độ "Trạm Kiểm Duyệt Cloud CMS". Hệ thống sẽ thực hiện đồng bộ 2 chiều giữa máy tính và Google Sheets, sau đó mời Quản trị viên truy cập vào Bảng điều khiển trực quan để phê duyệt hoặc giao việc cho AI.
 
 ## 🔀 Quy trình Thực thi của Hệ thống
 
-### Bước 1: Khai thác Dữ liệu
-- Hệ thống truy xuất file `database/idea_bank.json`.
-- Sàng lọc và trích xuất danh sách các hạng mục mang nhãn `"status": "pending"`. Giới hạn hiển thị 10-15 ý tưởng mới nhất.
+### Bước 1: Đồng bộ Dữ liệu 2 Chiều (Cloud Sync)
+Hệ thống kích hoạt bộ công cụ Google Sync Engine để đảm bảo dữ liệu mới nhất:
+// turbo
+1. **Đẩy Ý tưởng mới lên:** Thực thi `node scripts/google_sync_engine.js --up`.
+2. **Kéo lệnh Duyệt về:** Thực thi `node scripts/google_sync_engine.js --down`.
 
-### Bước 2: Dựng Giao Diện Quản Trị (CMS View)
-- Hệ thống tạo và thao tác trên 1 file vật lý tĩnh tại thư mục gốc của Dự án: `DASHBOARD_Y_TUONG.md`.
-- **LUẬT KHÔNG XẢ RÁC:** TUYỆT ĐỐI không tạo thêm file mới có chứa số đếm (như `..._1.md`). Phải sử dụng công cụ Tái Lập và Ghi đè (Overwrite) lên chính xác file `DASHBOARD_Y_TUONG.md` này mỗi khi gọi lệnh.
-- Cấu trúc Bảng gồm các Cột:
-- Sử dụng tiêu chuẩn bảng Markdown chuyên nghiệp.
-- Cấu trúc Bảng gồm các Cột:
-  - `STT`: Số thứ tự (để Quản trị viên dễ gọi "Duyệt cái thứ 3").
-  - `ID`: Mã định danh (In đậm).
-  - `Góc Nhìn (Angle)`: Thể loại nội dung, phong cách truyền đạt.
-  - `Nội dung`: Trích dẫn tóm tắt mô tả cốt lõi.
-  - `Nguồn`: Liên kết gốc.
+### Bước 2: Báo Cáo & Truy Cập Dashboard
+Sau khi đồng bộ thành công, Hệ thống BẮT BUỘC đưa ra thông báo:
 
-**Ví dụ:**
-| # | 🎫 ID | 🎭 Góc Nhìn | 📝 Mô Tả | 🔗 Nguồn |
-|:--|:------|:------------|:----------|:---------|
-| 1 | **`idea_01`** | *Phản biện* | Đi ngược số đông về việc làm 14h/ngày... | [Link] |
-| 2 | **`idea_02`** | *Case Study* | Phân tích mô hình 100M của Alex Hormozi... | [Link] |
+- **Trạng thái:** "🔄 Đã hoàn tất đồng bộ với Google Sheets."
+- **Hành động:** "Mời Quản trị viên truy cập vào Bảng điều khiển tại Google Sheets để kiểm duyệt."
+- **Link truy cập:** [Link Dashboard Google Sheets của bạn] (Lấy từ biến `GOOGLE_SHEET_APP_URL` nhưng chuyển thành dạng Spreadsheet URL hoặc nhắc người dùng mở Bookmark).
 
-### Bước 3: Báo Cáo Tóm Tắt trên Khung Chat 
-Bên cạnh thẻ Artifact, Hệ thống BẮT BUỘC đưa ra báo cáo tóm tắt trên Khung Chat:
-- Tổng số lượng Ý tưởng đang chờ (VD: *"Hệ thống ghi nhận 8 Ý tưởng chờ xét duyệt"*).
-- Phân loại chủ điểm nếu có (VD: *"Tập trung vào AI và Khởi nghiệp"*).
-- Kết thúc bằng hướng dẫn: *"Quản trị viên có thể phản hồi trực tiếp, ví dụ: 'Duyệt idea_01 và idea_03' hoặc 'Bỏ cái thứ 2'."*
+### Bước 3: Hướng dẫn Thao tác trên Sheet
+Nhắc nhở Quản trị viên các phím năng lượng trên Sheet:
+- Tại Tab **`💡 IDEA HUB`**: Đổi trạng thái sang `✅ Approved -> DO IT` để Robot tự động bắt đầu viết bài.
+- Tại Tab **`🚀 CONTENT PIPELINE`**: Xem thành phẩm cuối cùng và chọn `🚀 PUBLISH NOW` để đăng bài.
 
-### Bước 4: Xử lý Lệnh Phê duyệt / Loại bỏ (Natural Language Parser)
-Sau khi hiển thị Bảng, nếu Quản trị viên phản hồi bằng ngôn ngữ tự nhiên, Hệ thống BẮT BUỘC phân tích ý định và thực thi:
-
-**Trường hợp PHÊ DUYỆT** (VD: "Duyệt idea_01", "Lấy cái đầu tiên", "Duyệt idea_01 idea_03"):
-1. Mở file `database/idea_bank.json`.
-2. Tìm đối tượng có ID tương ứng, đổi `"status": "pending"` → `"status": "approved"`.
-3. Lưu file `idea_bank.json`.
-4. Mở file `database/ideation_pipeline.json`.
-5. Tạo Ticket mới và ghi bổ sung vào cuối mảng:
-   ```json
-   {
-     "ticket_id": "post_[timestamp_hoặc_ID_ngắn]",
-     "source_idea_id": "[ID vừa duyệt]",
-     "status": "WAITING_FOR_CONTENT"
-   }
-   ```
-6. Lưu file `ideation_pipeline.json`.
-7. Phản hồi ngắn gọn: *"🟢 Đã phê duyệt `[ID]`. Ticket `[ticket_id]` đã sẵn sàng trong Pipeline. Quản trị viên có thể gọi `/vietbai` để bắt đầu sản xuất nội dung."*
-
-**Trường hợp LOẠI BỎ** (VD: "Bỏ idea_02", "Xóa cái thứ 2", "Hủy idea_05 idea_08"):
-1. Mở file `database/idea_bank.json`.
-2. Tìm đối tượng có ID tương ứng, đổi `"status": "pending"` → `"status": "rejected"`.
-3. Lưu file `idea_bank.json`.
-4. Phản hồi ngắn gọn: *"🔴 Đã loại bỏ `[ID]`."*
-
-> **Lưu ý:** Quản trị viên có thể thao tác nhiều ID cùng lúc. Hệ thống phải phân tách từng ID và xử lý tuần tự.
+### Bước 4: Hậu kỳ sau khi Duyệt trên Sheet
+Nếu Quản trị viên phản hồi: "Đã duyệt trên Sheet", Hệ thống thực hiện lại lệnh `node scripts/google_sync_engine.js --down` để cập nhật các Ticket mới vào máy và sẵn sàng cho lệnh `/vietbai`.
 
 // turbo-all
