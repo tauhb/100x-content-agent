@@ -76,6 +76,13 @@ AI sẽ tự động cào dữ liệu Viral và đề xuất ma trận nội dun
 
 ---
 
+## 📖 Tài Liệu Hướng Dẫn Chi Tiết
+
+Để biết cách thiết lập Google Sheets CMS và chi tiết cách vận hành từng bước, vui lòng xem:
+👉 **[HƯỚNG DẪN VẬN HÀNH & THIẾT LẬP (GUIDE.md)](docs/GUIDE.md)**
+
+---
+
 ## 📂 Cấu Trúc Thư Mục
 
 -   `/database`: Chứa "Lake" dữ liệu và Pipeline sản xuất.
