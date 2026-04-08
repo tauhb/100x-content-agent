@@ -69,7 +69,12 @@ AI sẽ tự động cào dữ liệu Viral và đề xuất ma trận nội dun
 -   **Tạo Carousel**: `/tao_carousel` (Dùng HTML Engine).
 -   **Tạo Ảnh Đơn**: `/tao_anh` (Dùng Image Engine).
 
-### Bước 4: Đăng Bài
+### Bước 4: Đồng bộ & Hành động từ Sheet
+```bash
+/sheets_action
+```
+
+### Bước 5: Đăng Bài
 ```bash
 /publish
 ```
