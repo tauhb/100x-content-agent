@@ -12,31 +12,48 @@ description: Lệnh phân tích và thiết kế đồ hoạ dài (Infographic) 
 
 ### Bước 1: Sáng Tạo Nội Dung Cốt Lõi (Lõi Tri Thức)
 - Kiểm tra xem Ticket ID đã có file `master_content.md` hay chưa.
-- **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.
+- **NẾU CHƯA CÓ:** Tải `skills/copywriter.md` và tuân thủ NGHIÊM NGẶT mọi chỉ dẫn trong đó — không tự đặt ra quy tắc hay công thức nào khác → lưu vào `master_content.md`.
 - **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng nội dung gốc `master_content.md`.
 
-### Bước 1.5: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
-Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau:
+### Bước 1.5: Xác Nhận Brand Config (Chỉ Để Kiểm Tra — KHÔNG Hardcode)
+Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau để xác nhận brand tồn tại:
 ```bash
-cat database/brand_config.json
+cat database/my_accounts.json
 ```
-Trích xuất và lưu vào bộ nhớ tạm:
-- `FOUNDER_NAME` = `founder`
-- `BRAND_HANDLE` = `brand_identity.handle`
-- `ACCENT_COLOR` = `brand_identity.colors.accent`
-- `VISUAL_VIBE` = `brand_identity.visual_vibe`
 
-> ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên.
+> 🚨 **QUY TẮC PLACEHOLDER — TUYỆT ĐỐI KHÔNG VI PHẠM:**
+> Dù đã đọc được giá trị thực từ file trên, AI **KHÔNG ĐƯỢC PHÉP hardcode** các giá trị này vào HTML.
+> HTML phải luôn dùng đúng 6 placeholder sau — Engine sẽ tự inject khi render:
+> - `{{ACCENT_COLOR}}` — KHÔNG hardcode `#B6FF00` hay bất kỳ mã màu nào
+> - `{{FONT_PRIMARY}}` — KHÔNG hardcode `Inter` hay tên font nào
+> - `{{FONT_SECONDARY}}` — KHÔNG hardcode `Playfair Display` hay tên font nào
+> - `{{FOUNDER_NAME}}` — KHÔNG hardcode tên founder
+> - `{{BRAND_HANDLE}}` — KHÔNG hardcode @handle
+> - `{{AVATAR_SRC}}` — KHÔNG hardcode đường dẫn ảnh
+>
+> **Vi phạm → placeholder bị bỏ qua → brand injection thất bại.**
 
-### Bước 2: Phát Động Tối Cao Lệnh Tạo Infographic (Infographic Specialist)
-- **TÍCH HỢP KIẾN THỨC:** Tự động tải bộ lệnh từ `skills/media/infographic_specialist.md` vào trí nhớ tạm thời. Trợ lý KHÔNG ĐƯỢC làm theo ý thích cá nhân, phải làm 100% tuân thủ các Khối Cấu Trúc quy định tại tệp Specialist trên.
+### Bước 1.8: KHAI BÁO LAYOUT (OUTPUT BẮT BUỘC — CHỈ IN RA CHAT)
+
+Trước khi tạo file `infographic.html`, AI **phải** xuất ra **trong phản hồi text** 2 dòng sau:
+
+```
+LAYOUT_CHOICE: [tên layout từ routing matrix]
+LÝ DO: [1 câu giải thích tại sao nội dung này phù hợp với layout đó]
+```
+
+> 🚨 **NGHIÊM CẤM** đặt 2 dòng `LAYOUT_CHOICE` / `LÝ DO` vào bên trong file `infographic.html`. Chúng chỉ được xuất hiện trong text phản hồi của AI, **không bao giờ được ghi vào file**.
+> ⚠️ Nếu thiếu khai báo này → DỪNG LẠI, phân tích lại từ đầu trước khi tiếp tục.
+
+### Bước 2: Phát Động Tối Cao Lệnh Tạo Infographic (Infographic Specialist V6)
+- **TÍCH HỢP KIẾN THỨC:** Tự động tải bộ lệnh từ `skills/media/infographic_specialist.md` vào trí nhớ tạm thời. Trợ lý KHÔNG ĐƯỢC làm theo ý thích cá nhân, phải tuân thủ 100% Routing Matrix và code mẫu trong file Specialist.
 - 🚨 **KHỞI TẠO TIỀN TRẠM (MANDATORY):** Để đảm bảo không bao giờ lỗi "File not found", hệ thống thực hiện tạo sẵn rễ thư mục chuyên biệt:
   ```bash
   mkdir -p "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic" && touch "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic/infographic.html" "media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/infographic/caption.txt"
   ```
 - **Thực thi thiết kế:**
   1. Ghi 100% nội dung bài viết từ `master_content.md` vào `infographic/caption.txt`.
-  2. Phân tích nội dung và DÙNG CÁC KHỐI LEGO (Skeletons) trong `infographic_specialist.md` để dệt nội dung.
+  2. Tự viết toàn bộ HTML từ đầu theo layout đã khai báo ở Bước 1.8 — dùng code mẫu trong `infographic_specialist.md` làm nền tảng.
   3. Viết Mã nguồn `infographic.html` xả thẳng vào file `infographic/infographic.html`.
 - **Kích thước ảnh:** Khóa ở tỷ lệ 4:5 (1080px x 1350px).
 

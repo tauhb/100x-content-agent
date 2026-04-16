@@ -169,11 +169,12 @@ async function syncSettingsUp() {
     const accPath = path.join(__dirname, '..', 'database', 'my_accounts.json');
     if (!fs.existsSync(accPath)) return;
     const accData = JSON.parse(fs.readFileSync(accPath, 'utf8'));
-    if (!accData.channels || accData.channels.length === 0) return;
-    
+    const _activeAccount = accData.accounts.find(a => a.active) || accData.accounts[0];
+    if (!_activeAccount?.channels || _activeAccount.channels.length === 0) return;
+
     const payload = {
       action: "sync_settings",
-      channels: accData.channels
+      channels: _activeAccount.channels
     };
     await axios.post(GOOGLE_SHEET_APP_URL, payload);
     console.log('✅ Đã cập nhật Menu Kênh Đăng trên Google Sheets.');

@@ -53,10 +53,12 @@ async function renderDynamicImage(inputHtmlPath) {
         resolvedImgData.push({ id: req.id, base64: base64Src });
     }
 
-    const brandConfigPath = path.join(__dirname, '..', 'database', 'brand_config.json');
+    const _myAccountsPath = path.join(__dirname, '..', 'database', 'my_accounts.json');
     let brandConfig = {};
-    if (fs.existsSync(brandConfigPath)) {
-        brandConfig = JSON.parse(fs.readFileSync(brandConfigPath, 'utf8'));
+    if (fs.existsSync(_myAccountsPath)) {
+        const _myAccounts = JSON.parse(fs.readFileSync(_myAccountsPath, 'utf8'));
+        const _activeAccount = _myAccounts.accounts.find(a => a.active) || _myAccounts.accounts[0];
+        brandConfig = { founder: _activeAccount.founder, brand_identity: _activeAccount.brand_identity };
     }
 
     const accentColor = brandConfig.brand_identity?.colors?.accent || '#B6FF00';
@@ -90,15 +92,8 @@ async function renderDynamicImage(inputHtmlPath) {
     // 4:5 ratio for single images: 1080x1350
     await renderPage.setViewport({ width: 1080, height: 1350, deviceScaleFactor: 2 });
 
-    const watermarkConfig = brandConfig.brand_identity?.watermark || {};
-    let footerHtml = '';
-    if (watermarkConfig.enabled !== false) {
-        footerHtml = `
-            <footer>
-                <span class="watermark-brand">${watermarkConfig.text || '100X CONTENT'}</span>
-            </footer>
-        `;
-    }
+    // Footer watermark disabled — header (avatar + name + handle) đã đủ brand identity
+    const footerHtml = '';
 
     const baseWrappedHtml = `
     <!DOCTYPE html>
@@ -136,6 +131,10 @@ async function renderDynamicImage(inputHtmlPath) {
             em, i, .highlight-text { font-family: var(--font-secondary); font-style: italic; background: transparent !important; color: var(--brand-accent); margin: 0 5px; font-weight: inherit; }
         </style>
         ${payload.styles}
+        <style>
+            /* Engine override: strip mọi hiệu ứng kính mờ từ AI-generated HTML */
+            * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+        </style>
     </head>
     <body>
         <div class="wrapper">

@@ -21,7 +21,6 @@ draft_*.txt
 draft_*.html
 # Database & Private Data
 database/*.json
-!database/brand_config.json
 !database/my_accounts.json
 database/history/
 database/scraped_temp/

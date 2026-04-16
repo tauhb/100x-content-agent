@@ -12,3 +12,4 @@ Config.setVideoImageFormat("jpeg");
 Config.setOverwriteOutput(true);
 Config.overrideWebpackConfig(enableTailwind);
 Config.setChromiumDisableWebSecurity(true);
+Config.setStudioPort(3009);

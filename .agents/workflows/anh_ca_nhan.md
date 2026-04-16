@@ -9,7 +9,7 @@ description: Khởi động Xưởng Đúc Ảnh Cá Nhân - Đề xuất bối 
 ## Quy trình Thực thi
 
 ### Bước 1: Trí tuệ Đề xuất (Brainstorming)
-- Đọc dữ liệu từ `database/brand_config.json` để lấy Visual Vibe.
+- Đọc dữ liệu từ `database/my_accounts.json`, tìm account có `"active": true`, lấy `brand_identity.visual_vibe`.
 - Trình bày ra **20 bối cảnh/concept** phù hợp với phong thái một Doanh nhân/Founder (VD: Đang ngồi điều hành ở bàn làm việc gỗ tự nhiên, đứng khoanh tay trên tòa nhà kính, sải bước ngoài đường may đo Vest...). 
 - Liệt kê ra màn hình thành danh sách để User LỰA CHỌN. **DỪNG LẠI CHỜ USER CHỐT.**
 

@@ -14,19 +14,19 @@ description: Lệnh kích hoạt Đặc nhiệm Video Ngắn KHÔNG THOẠI (B-R
 ### Bước 0: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
 Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau:
 ```bash
-cat database/brand_config.json
+cat database/my_accounts.json
 ```
-Trích xuất và lưu vào bộ nhớ tạm:
-- `FOUNDER_NAME` = `founder`
-- `BRAND_HANDLE` = `brand_identity.handle`
-- `ACCENT_COLOR` = `brand_identity.colors.accent`
-- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+Tìm object có `"active": true` trong mảng `accounts`, trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `accounts[active].founder`
+- `BRAND_HANDLE` = `accounts[active].brand_identity.handle`
+- `ACCENT_COLOR` = `accounts[active].brand_identity.colors.accent`
+- `VISUAL_VIBE` = `accounts[active].brand_identity.visual_vibe`
 
 > ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên.
 
 ### Bước 1: Sáng Tạo Nội Dung Cốt Lõi (Lõi Tri Thức)
 - Kiểm tra xem Ticket ID đã có file `master_content.md` hay chưa.
-- **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận Idea và nặn ra 1 bài viết dài lưu vào `master_content.md`.
+- **NẾU CHƯA CÓ:** Tải `skills/copywriter.md` và tuân thủ NGHIÊM NGẶT mọi chỉ dẫn trong đó — không tự đặt ra quy tắc hay công thức nào khác → lưu vào `master_content.md`.
 - **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng nội dung gốc.
 
 ### Bước 2: Phát động Đạo diễn Video Nhấp Nháy (HTML B-Roll Specialist)

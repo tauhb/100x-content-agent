@@ -28,14 +28,11 @@ Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thốn
   - **Hạng mục Thực thi 1 (Khởi tạo bản nháp chữ - Text Draft):** Trợ lý cấu thành một dòng định vị nội dung rất ngắn cấu tạo làm Trạng thái (Status Cấp 1), kết hợp cùng khả năng phân mảnh nội dung lõi của Master Content trở thành mảng 5 đến 10 Phân đoạn nội dung Bình luận phụ trợ.
   - **Hạng mục Thực thi 2 (Chuyển đổi thành Phần mềm Media Payload):** Trợ lý cấu hình quy trình chuyển hoá danh sách phân đoạn thành chuỗi biến định danh chuẩn cấu trúc JSON.
 
-- 🚨 **LUẬT CHỐNG CRASH IDE (BẮT BUỘC):** Để tránh lỗi "File not found", thao tác lưu file phải chia 2 nhịp:
-  - **Nhịp 1:** TẠO MỚI 2 file nháp ngay tại THƯ MỤC GỐC dự án, tên BẮT BUỘC CHỨA SỐ NGẪU NHIÊN (VD: `draft_caption_7392.txt` và `draft_payload_7392.json`). Ghi 100% nội dung Caption và Dữ liệu JSON vào 2 file này. (TUYỆT ĐỐI không ghi thẳng vào thư mục `comment_chain/`).
-  - **Nhịp 2:** Mở Terminal chạy lệnh Node dời 2 file nháp vào đúng vị trí:
-    ```bash
-    node -e "const fs=require('fs'); const t='media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/comment_chain'; fs.mkdirSync(t, {recursive:true}); fs.renameSync('[TÊN_FILE_CAPTION_NHÀP]', t+'/caption.txt'); fs.renameSync('[TÊN_FILE_JSON_NHÁP]', t+'/media_payload.json');"
-    ```
-    *(Thay đổi cấu trúc ngoặc vuông cho đúng thực tế)*
-  - **Nhịp 3 (ZERO-TOUCH):** Lệnh Terminal báo xong là Thành Công. TUYỆT ĐỐI KHÔNG dùng công cụ Đọc/Phân Tích file để mở lại thư mục đích nhằm kiểm tra. Đi tiếp luôn!
+- 🚨 **KHỞI TẠO TIỀN TRẠM (BẮT BUỘC — chạy trước khi ghi bất kỳ file nào):**
+  ```bash
+  node -e "const fs=require('fs'); const t='media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/comment_chain'; fs.mkdirSync(t,{recursive:true}); if(!fs.existsSync(t+'/caption.txt')) fs.writeFileSync(t+'/caption.txt',''); if(!fs.existsSync(t+'/media_payload.json')) fs.writeFileSync(t+'/media_payload.json','{}'); console.log('Scaffold OK:', t);"
+  ```
+  Sau khi lệnh báo `Scaffold OK`, AI ghi **trực tiếp** vào 2 file đích đã tồn tại — không cần file nháp trung gian ở root.
 
 ### Bước 3: Động cơ Kết xuất và Báo cáo
 🚨 **BẢO VỆ TIẾN TRÌNH ZERO-TOUCH:** HỆ THỐNG TUYỆT ĐỐI KHÔNG ĐƯỢC phép chạm vào file `ideation_pipeline.json` để thay đổi trạng thái hay nhồi nhét Payload. Mọi thao tác lưu trữ đã được uỷ quyền cho Node.js ở Bước 2. Viết xong là BÁO CÁO KẾT QUẢ LUÔN, TUYỆT ĐỐI KHÔNG dùng công cụ lẩn quẩn chỉnh sửa bồi thêm vào bất cứ file nào nữa để tránh bị Ứng dụng IDE kẹt lệnh (Trạng thái hỏi Review Changes)!

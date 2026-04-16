@@ -1,6 +1,6 @@
-// Removed Puppeteer
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const axios = require('axios');
 
 /**
@@ -57,6 +57,36 @@ function removeVietnameseTones(str) {
     return str;
 }
 
+/**
+ * screenshotUrl: Dùng Puppeteer chụp màn hình một URL bất kỳ.
+ * Trả về đường dẫn file PNG tạm thời.
+ */
+async function screenshotUrl(url) {
+    if (!url || !url.startsWith('http')) {
+        console.log(`[url_screenshot] ⛔️ URL không hợp lệ: "${url}"`);
+        return null;
+    }
+    try {
+        const puppeteer = require('puppeteer');
+        console.log(`[url_screenshot] 🌐 Đang mở trình duyệt chụp: ${url}`);
+        const browser = await puppeteer.launch({ headless: 'new' });
+        const page = await browser.newPage();
+        await page.setViewport({ width: 1920, height: 1080 });
+        // Giả lập user agent thật để tránh bị chặn bot
+        await page.setUserAgent('Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
+        await page.goto(url, { waitUntil: 'networkidle2', timeout: 25000 });
+        await new Promise(r => setTimeout(r, 1500));
+        const tmpFile = path.join(os.tmpdir(), `url_screenshot_${Date.now()}.png`);
+        await page.screenshot({ path: tmpFile, fullPage: false });
+        await browser.close();
+        console.log(`[url_screenshot] ✅ Chụp thành công: ${url}`);
+        return tmpFile;
+    } catch (e) {
+        console.error(`[url_screenshot] ❌ Lỗi khi chụp "${url}":`, e.message);
+        return null;
+    }
+}
+
 // 3. Hàm Controller Cấp Cao: Quản lý chiến thuật săn ảnh
 async function getAssetForImageEngine(keyword, media_source) {
     if (!keyword) {
@@ -64,29 +94,53 @@ async function getAssetForImageEngine(keyword, media_source) {
         return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
     }
 
+    // url_screenshot → dùng Puppeteer chụp màn hình URL (keyword chứa URL)
+    if (media_source === 'url_screenshot') {
+        return await screenshotUrl(keyword);
+    }
+
     const noAccentKeyword = removeVietnameseTones(keyword);
     const cleanKeyword = noAccentKeyword.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    
-    // Nếu AI yêu cầu đích danh một thư mục:
+
+    // image_stock → gọi Pexels trực tiếp, local chỉ là cache dự phòng
+    if (media_source === 'image_stock') {
+        console.log(`[Asset Pipeline] 📡 image_stock — Gọi Pexels API cho keyword: "${keyword}"`);
+        const pexelsResult = await fetchAndSaveImage(keyword);
+        if (pexelsResult) return pexelsResult;
+
+        // Pexels thất bại (key chưa cấu hình hoặc lỗi) → thử local cache
+        const stockDir = path.join(__dirname, '..', '..', 'media-input', 'image_stock');
+        if (fs.existsSync(stockDir)) {
+            const vaultFiles = fs.readdirSync(stockDir).filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i) && !f.toLowerCase().includes('master'));
+            const matches = vaultFiles.filter(f => f.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(f.split('.')[0].toLowerCase()));
+            const selectedFile = matches.length > 0
+                ? matches[Math.floor(Math.random() * matches.length)]
+                : vaultFiles.length > 0 ? vaultFiles[Math.floor(Math.random() * vaultFiles.length)] : '';
+            if (selectedFile) {
+                console.log(`[Asset Pipeline] 💾 Dùng ảnh cache local: ${selectedFile}`);
+                return path.resolve(stockDir, selectedFile);
+            }
+        }
+
+        console.log(`[Asset Pipeline] ❌ Pexels và local đều thất bại. Dùng Unsplash backup.`);
+        return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
+    }
+
+    // Các loại media khác → quét thư mục local
     let targetDir = '';
     if (media_source === 'personal_image' || media_source === 'personal_library') {
         targetDir = path.join(__dirname, '..', '..', 'media-input', 'personal_image');
     } else if (media_source === 'celebrity_vault' || media_source === 'celebrity_image') {
         targetDir = path.join(__dirname, '..', '..', 'media-input', 'celebrity_image');
-    } else if (media_source === 'image_stock') {
-        targetDir = path.join(__dirname, '..', '..', 'media-input', 'image_stock');
     } else {
-        // Fallback for old payloads
         targetDir = path.join(__dirname, '..', '..', 'media-input', 'image_stock');
     }
 
-    // Quét Thư Mục Đích:
     if (fs.existsSync(targetDir)) {
         // TUYỆT ĐỐI KHÔNG BỐC NHẦM ẢNH HẠT GIỐNG (master_face) LÀM BACKGROUND
         const vaultFiles = fs.readdirSync(targetDir).filter(f => f.match(/\.(jpg|jpeg|png|webp)$/i) && !f.toLowerCase().includes('master'));
-        // Tìm file có chứa keyword, nếu không có lấy Random (Đảm bảo Antigravity đã đẻ sẵn vào đây rồi)
-        let matches = vaultFiles.filter(f => f.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(f.split('.')[0].toLowerCase()));
-        
+        const matches = vaultFiles.filter(f => f.toLowerCase().includes(cleanKeyword) || cleanKeyword.includes(f.split('.')[0].toLowerCase()));
+
         let selectedFile = '';
         if (matches.length > 0) {
             selectedFile = matches[Math.floor(Math.random() * matches.length)];
@@ -97,19 +151,11 @@ async function getAssetForImageEngine(keyword, media_source) {
         }
 
         if (selectedFile) {
-            // Trả đường dẫn tuyệt đối — caller sẽ convert sang base64 để tránh CORS/file:// trên Windows
             return path.resolve(targetDir, selectedFile);
         }
     }
-    
-    // Chiến thuật cuối cùng: Rớt đài mọi phòng ban! Gọi Pexels API
-    console.log(`[Asset Pipeline] 🚨 Báo Động! Thư mục ${media_source} trống trơn! Khởi động Fallback lấy ảnh từ Pexels cho keyword: ${cleanKeyword}`);
-    const pexelsFallback = await fetchAndSaveImage(cleanKeyword);
-    if (pexelsFallback) {
-        return pexelsFallback;
-    }
 
-    console.log(`[Asset Pipeline] ❌ Pexels cũng thất bại. Mượn tạm Unsplash Backup cuối cùng.`);
+    console.log(`[Asset Pipeline] 🚨 Thư mục ${media_source} trống. Dùng Unsplash backup.`);
     return 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?q=80&w=1080&auto=format&fit=crop';
 }
 

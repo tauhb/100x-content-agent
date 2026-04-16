@@ -23,31 +23,45 @@ Nếu Quản trị viên KHÔNG cung cấp mã Ticket ID sau lệnh, Hệ thốn
 
 ### Bước 1: Sáng Tạo Nội Dung Cốt Lõi (Lõi Tri Thức)
 - Kiểm tra xem Ticket ID đã có file `master_content.md` hay chưa.
-- **NẾU CHƯA CÓ:** Tự động kích hoạt Não bộ Viết bài (`skills/brain/vietbai.md`). Trợ lý tự suy luận, phân tích Idea và viết ra một bài nội dung nguyên bản (Master Content) dài và chất lượng, lưu thẳng vào `master_content.md`. (Bỏ qua bước bắt Quản trị viên gõ `/vietbai`).
+- **NẾU CHƯA CÓ:** Tải `skills/copywriter.md` và tuân thủ NGHIÊM NGẶT mọi chỉ dẫn trong đó — không tự đặt ra quy tắc hay công thức nào khác → lưu thẳng vào `master_content.md`.
+  - Sau khi viết xong, tự kiểm tra BẮTT BUỘC theo checklist sau trước khi lưu file:
+    - [ ] Đủ 7 phần theo cấu trúc (Hook → Mirror → Câu chuyện → Bước ngoặt → Insight → Đúc kết → CTA)?
+    - [ ] Độ dài đạt 800–1200 từ?
+    - [ ] Phần Insight (Phần 5) chiếm 50–60% bài và có ít nhất 5 đầu mục?
+    - [ ] CTA không chứa link?
+    - [ ] Đại từ xưng hô đúng theo cấu hình account?
+  - Nếu bất kỳ mục nào chưa đạt → sửa lại trước khi lưu, KHÔNG lưu bản chưa hoàn thiện.
 - **NẾU ĐÃ CÓ:** Bỏ qua bước này và tận dụng tệp `master_content.md` hiện tại.
 
 ### Bước 1.5a: Nạp Thông Số Thương Hiệu (Brand Config Load) - BẮT BUỘC
 Trước khi viết bất kỳ dòng HTML nào, AI **PHẢI** đọc file sau và ghi nhớ các giá trị thực:
 ```bash
-cat database/brand_config.json
+cat database/my_accounts.json
 ```
-Trích xuất và lưu vào bộ nhớ tạm:
-- `FOUNDER_NAME` = `founder`
-- `BRAND_HANDLE` = `brand_identity.handle`
-- `ACCENT_COLOR` = `brand_identity.colors.accent`
-- `FONT_PRIMARY` = `brand_identity.fonts.primary`
-- `VISUAL_VIBE` = `brand_identity.visual_vibe`
+Tìm object có `"active": true` trong mảng `accounts`, trích xuất và lưu vào bộ nhớ tạm:
+- `FOUNDER_NAME` = `accounts[active].founder`
+- `BRAND_HANDLE` = `accounts[active].brand_identity.handle`
+- `ACCENT_COLOR` = `accounts[active].brand_identity.colors.accent`
+- `FONT_PRIMARY` = `accounts[active].brand_identity.fonts.primary`
+- `VISUAL_VIBE` = `accounts[active].brand_identity.visual_vibe`
 
 > ⚠️ **NGHIÊM CẤM:** Tuyệt đối KHÔNG tự bịa tên thương hiệu, handle, hay màu sắc. Mọi giá trị phải lấy từ file trên. Nếu file không có trường nào, để trống — KHÔNG đặt giá trị mặc định tự nghĩ ra.
 
-### Bước 1.5b: Khám Xét Kho Ảnh (Asset Discovery) - TOKEN-FREE
-Để chọn Layout tối ưu (2/3 hay Center-Card), Trợ lý **BẮT BUỘC** thực hiện lệnh liệt kê file sau (Không tốn Token Vision):
+### Bước 1.5b: Phân Loại Layout (Asset & Content Discovery)
+
+**1. Kiểm tra URL trong nội dung:**
+Đọc `master_content.md`, tìm xem bài có đề cập đến tool/website/app cụ thể không (có URL dạng `https://...`).
+- **NẾU CÓ URL** → Ghi chú `LAYOUT = Screenshot-Hero`, lưu URL vào `SCREENSHOT_URL`. Bỏ qua bước kiểm tra ảnh bên dưới.
+- **NẾU KHÔNG CÓ URL** → Tiếp tục bước 2 bên dưới.
+
+**2. Kiểm tra kho ảnh (chỉ khi không có URL):**
 ```bash
 ls media-input/celebrity_image && ls media-input/personal_image
 ```
-- Nếu thấy tên file khớp với chủ đề bài (VD: `warren_buffett.jpg` cho bài về Buffett) -> **Ghi chú lại để dùng Layout Portrait-Fade (65/35) ở Bước 2.**
-- Nếu không thấy -> Mặc định dùng Layout Typography (`Center-Card` hoặc `Split-Screen`).
-- Ghi nhớ: Tên thương hiệu = `FOUNDER_NAME`, Handle = `BRAND_HANDLE` đã đọc ở Bước 1.5a.
+- Nếu thấy tên file khớp với chủ đề bài → `LAYOUT = Portrait-Fade`.
+- Nếu không thấy → `LAYOUT = Center-Card` hoặc `Split-Screen`.
+
+Ghi nhớ kết quả `LAYOUT` để dùng ở Bước 2.
 
 ### Bước 2: Khởi động Tối Cao Lệnh Tạo Ảnh (Image Specialist)
 - Tải hệ thống Kỹ năng nòng cốt: `skills/media/image_specialist.md`.

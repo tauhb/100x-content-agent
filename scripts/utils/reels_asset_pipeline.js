@@ -65,6 +65,96 @@ async function getPexelsBroll(query, sceneIndex, destDir) {
 }
 
 /**
+ * 📂 1.1. LOCAL IMAGE: Tìm ảnh local với keyword-aware matching
+ *
+ * Logic ưu tiên:
+ *   1. celebrity_image/ có file tên khớp keyword → dùng ngay (nội dung về vĩ nhân)
+ *   2. personal_image/ có file → dùng (ảnh founder phù hợp mọi nội dung thương hiệu)
+ *   3. image_stock/ có file khớp keyword → dùng
+ *   4. image_stock/ bất kỳ → dùng
+ */
+async function getLocalImage(sceneIndex, query = '') {
+    const validExts = /\.(jpg|jpeg|png|webp)$/i;
+    const base      = path.join(__dirname, '..', '..', 'media-input');
+
+    const pickFile = (dir, matchKeyword = '') => {
+        if (!fs.existsSync(dir)) return null;
+        const files = fs.readdirSync(dir).filter(f => validExts.test(f));
+        if (files.length === 0) return null;
+
+        if (matchKeyword) {
+            // Normalize: tách keyword thành các từ, so với tên file
+            const words = matchKeyword.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(w => w.length > 2);
+            const matched = files.filter(f => words.some(w => f.toLowerCase().includes(w)));
+            if (matched.length > 0) {
+                return matched[Math.floor(Math.random() * matched.length)];
+            }
+        }
+
+        return null;
+    };
+
+    const serve = (folder, file) => {
+        console.log(`[Local Image] ✅ Cảnh ${sceneIndex}: ${folder}/${file}`);
+        return `http://localhost:9876/media-input/${folder}/${encodeURIComponent(file)}`;
+    };
+
+    // 1. celebrity_image — keyword match (nội dung về người cụ thể)
+    const celebMatch = pickFile(path.join(base, 'celebrity_image'), query);
+    if (celebMatch) return serve('celebrity_image', celebMatch);
+
+    // 2. personal_image — bất kỳ (ảnh founder luôn phù hợp cho nội dung brand)
+    const personalDir = path.join(base, 'personal_image');
+    if (fs.existsSync(personalDir)) {
+        const files = fs.readdirSync(personalDir).filter(f => validExts.test(f));
+        if (files.length > 0) {
+            const picked = files[Math.floor(Math.random() * files.length)];
+            return serve('personal_image', picked);
+        }
+    }
+
+    // 3. image_stock — keyword match
+    const stockMatch = pickFile(path.join(base, 'image_stock'), query);
+    if (stockMatch) return serve('image_stock', stockMatch);
+
+    // 4. image_stock — bất kỳ
+    const stockDir = path.join(base, 'image_stock');
+    if (fs.existsSync(stockDir)) {
+        const files = fs.readdirSync(stockDir).filter(f => validExts.test(f));
+        if (files.length > 0) {
+            const picked = files[Math.floor(Math.random() * files.length)];
+            return serve('image_stock', picked);
+        }
+    }
+
+    return null;
+}
+
+/**
+ * 🖼️ 1.2. PEXELS IMAGE: Tìm ảnh tĩnh khi không có video (Ken Burns fallback)
+ */
+async function getPexelsImage(query, sceneIndex, destDir) {
+    if (!PEXELS_KEY) return null;
+    console.log(`[Pexels Image] Tìm ảnh fallback: "${query}"...`);
+    try {
+        const res = await axios.get(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&orientation=portrait&per_page=5`, {
+            headers: { Authorization: PEXELS_KEY }
+        });
+        if (res.data.photos && res.data.photos.length > 0) {
+            const photo = res.data.photos[Math.floor(Math.random() * Math.min(3, res.data.photos.length))];
+            const imgUrl = photo.src.large2x || photo.src.large || photo.src.original;
+            const dest = path.join(destDir, `scene_${sceneIndex}_bg_img.jpg`);
+            await downloadFile(imgUrl, dest);
+            console.log(`[Pexels Image] ✅ Đã tải ảnh Ken Burns cho Cảnh ${sceneIndex}`);
+            return toTicketHttpUrl(dest);
+        }
+    } catch (err) {
+        console.error(`[Pexels Image Lỗi] Cảnh ${sceneIndex}:`, err.message);
+    }
+    return null;
+}
+
+/**
  * 📂 1.5. LOCAL VIDEO: Trích xuất nền Video Cá nhân (Ưu tiên SSoT)
  */
 async function getLocalBroll(query, sceneIndex) {
@@ -216,6 +306,8 @@ async function getLocalMusic(vibe = 'lofi') {
 
 module.exports = {
     getPexelsBroll,
+    getPexelsImage,
+    getLocalImage,
     getLocalBroll,
     getElevenLabsVoice,
     getHeyGenAvatar,

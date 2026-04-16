@@ -12,7 +12,7 @@ Biến một chủ đề thành Video Reels, Carousel, Ảnh Quote, Infographic 
 - **Carousel / Ảnh / Infographic** — Puppeteer render HTML thành ảnh chất lượng cao
 - **Viết bài tự động** — Gemini AI viết Master Content 800-2000 từ theo Brand DNA
 - **Tự động đăng bài** — Playwright mô phỏng thao tác người dùng, đăng lên Facebook không cần API
-- **White-label** — Toàn bộ màu sắc, font, giọng thương hiệu cấu hình trong 1 file `brand_config.json`
+- **White-label** — Toàn bộ màu sắc, font, giọng thương hiệu cấu hình trong `my_accounts.json` (hỗ trợ nhiều brand song song)
 - **Cross-platform** — Chạy trên Windows 64-bit, macOS, Linux (không cần Docker)
 
 ---
@@ -84,7 +84,7 @@ claude
 100X Content Agent/
 ├── .env                    ← API Keys (KHÔNG commit file này)
 ├── database/
-│   ├── brand_config.json   ← Cấu hình thương hiệu (màu, font, tên)
+│   ├── my_accounts.json    ← Tài khoản & cấu hình thương hiệu (màu, font, tên, kênh)
 │   └── ideation_pipeline.json
 ├── media-input/            ← Đặt media cá nhân vào đây
 │   ├── avatar.png

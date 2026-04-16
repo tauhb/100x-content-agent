@@ -145,28 +145,35 @@ ELEVENLABS_VOICE_ID=""
 
 ## 4. Cấu Hình Brand DNA
 
-File: `database/brand_config.json`
+File: `database/my_accounts.json` — Brand DNA nằm trong từng account, cho phép quản lý nhiều brand song song.
 
 ```json
 {
-  "founder": "Tên Của Bạn",
-  "brand_identity": {
-    "handle": "@ten_trang_cua_ban",
-    "colors": {
-      "accent": "#B6FF00"
-    },
-    "fonts": {
-      "primary": "Inter",
-      "accent": "Playfair Display"
-    },
-    "visual_vibe": "Mô tả phong cách hình ảnh của bạn (dark mode, cinematic, v.v.)",
-    "watermark": {
-      "enabled": false,
-      "text": "TÊN THƯƠNG HIỆU",
-      "bottom_margin": "80px",
-      "opacity": 0.6
+  "accounts": [
+    {
+      "id": "ten_brand",
+      "active": true,
+      "founder": "Tên Của Bạn",
+      "brand_identity": {
+        "handle": "@ten_trang_cua_ban",
+        "colors": {
+          "accent": "#B6FF00"
+        },
+        "fonts": {
+          "primary": "Inter",
+          "accent": "Playfair Display"
+        },
+        "visual_vibe": "Mô tả phong cách hình ảnh của bạn (dark mode, cinematic, v.v.)",
+        "watermark": {
+          "enabled": false,
+          "text": "TÊN THƯƠNG HIỆU",
+          "bottom_margin": "80px",
+          "opacity": 0.6
+        }
+      },
+      "channels": []
     }
-  }
+  ]
 }
 ```
 
@@ -410,7 +417,7 @@ Node.js 18+, Playwright, Puppeteer, Remotion đều không có phiên bản 32-b
 ├── .env.example            ← Template API Keys
 ├── GUIDE.md                ← File này
 ├── database/
-│   ├── brand_config.json   ← Cấu hình thương hiệu
+│   ├── my_accounts.json    ← Tài khoản & cấu hình thương hiệu (brand_identity + channels)
 │   └── ideation_pipeline.json ← Database ticket nội dung
 ├── media-input/            ← Đặt media cá nhân vào đây
 │   ├── avatar.png

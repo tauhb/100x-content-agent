@@ -5,6 +5,7 @@ const axios = require('axios');
 const { execSync } = require('child_process');
 const ffmpegStatic = require('ffmpeg-static');
 const { saveDeliverableAndPrunePipeline } = require('./utils/inventory_manager');
+const { getAssetForImageEngine, resolveAssetToBase64 } = require('./utils/image_asset_pipeline');
 
 // Parse arguments
 const args = process.argv.slice(2);
@@ -45,9 +46,13 @@ async function renderBrollEngine(htmlPath) {
     let rawInputHtml = fs.readFileSync(htmlPath, 'utf8');
 
     // Nạp Brand Config
-    const brandConfigPath = path.join(__dirname, '..', 'database', 'brand_config.json');
+    const _myAccountsPath = path.join(__dirname, '..', 'database', 'my_accounts.json');
     let brandConfig = {};
-    if (fs.existsSync(brandConfigPath)) brandConfig = JSON.parse(fs.readFileSync(brandConfigPath, 'utf8'));
+    if (fs.existsSync(_myAccountsPath)) {
+        const _myAccounts = JSON.parse(fs.readFileSync(_myAccountsPath, 'utf8'));
+        const _activeAccount = _myAccounts.accounts.find(a => a.active) || _myAccounts.accounts[0];
+        brandConfig = { founder: _activeAccount.founder, brand_identity: _activeAccount.brand_identity };
+    }
 
     const founderName = brandConfig.founder || 'System';
     const brandHandle = brandConfig.brand_identity?.handle || brandConfig.brand_identity?.watermark?.text || '@brand';
@@ -77,13 +82,40 @@ async function renderBrollEngine(htmlPath) {
         const musicMeta = document.querySelector('meta[name="music-keyword"]');
         const styles = Array.from(document.querySelectorAll('style')).map(s => s.outerHTML).join('\n');
         const mainEl = document.querySelector('main');
-        return { 
+
+        // Thu thập tất cả data-img-vault elements bên trong main
+        const vaultElements = mainEl ? Array.from(mainEl.querySelectorAll('[data-img-vault]')) : [];
+        const imgRequests = vaultElements.map((el, index) => {
+            const uniqueId = 'broll-img-' + index;
+            el.setAttribute('data-inj-id', uniqueId);
+            return {
+                id: uniqueId,
+                vault: el.getAttribute('data-img-vault'),
+                keyword: el.getAttribute('data-keyword') || ''
+            };
+        });
+
+        return {
             brollKeyword: brollMeta ? brollMeta.getAttribute('content') : '',
             musicKeyword: musicMeta ? musicMeta.getAttribute('content') : '',
             styles,
-            mainHtml: mainEl ? mainEl.innerHTML : document.body.innerHTML
+            mainHtml: mainEl ? mainEl.innerHTML : document.body.innerHTML,
+            imgRequests
         };
     });
+
+    // Giải quyết tất cả ảnh từ vault (bao gồm url_screenshot)
+    const resolvedImgData = [];
+    for (const req of (metadata.imgRequests || [])) {
+        let base64Src = '';
+        try {
+            const resolved = resolveAssetToBase64(await getAssetForImageEngine(req.keyword, req.vault));
+            if (resolved) base64Src = resolved;
+        } catch (e) {
+            console.log(`[B-Roll Engine] Lỗi truy xuất ${req.vault} cho keyword "${req.keyword}"`);
+        }
+        resolvedImgData.push({ id: req.id, base64: base64Src });
+    }
 
     const accentColor = brandConfig.brand_identity?.colors?.accent || '#B6FF00';
     const fontPrimary = brandConfig.brand_identity?.fonts?.primary || 'Inter';
@@ -117,23 +149,29 @@ async function renderBrollEngine(htmlPath) {
             main { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 1080px; height: 1920px; }
             em, i, .highlight-text { font-family: var(--font-secondary) !important; font-style: italic !important; background: transparent !important; color: var(--brand-accent) !important; margin: 0 5px; font-weight: inherit !important; }
             
-            /* LÕI HỆ THỐNG: WATERMARK */
-            #system-watermark {
-                position: absolute; bottom: 80px; display: flex; align-items: center;
-                background: rgba(0,0,0,0.5); padding: 15px 40px; border-radius: 50px; z-index: 9999;
-                left: 50%; transform: translateX(-50%); width: auto;
+            /* LÕI HỆ THỐNG: HEADER BRAND (top) */
+            #system-header {
+                position: absolute; top: 0; left: 0; width: 100%;
+                display: flex; align-items: center;
+                padding: 50px 56px 100px;
+                background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+                z-index: 9999;
             }
-            #system-watermark img.avatar { width: 60px; height: 60px; border-radius: 50%; margin-right: 20px; object-fit: cover;}
-            #system-watermark .brand-info { display: flex; flex-direction: column; text-align: left; }
-            #system-watermark .founder { font-size: 28px; font-weight: bold; color: #fff; }
-            #system-watermark .handle { font-size: 22px; color: #ccc; }
+            #system-header img.avatar {
+                width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+                border: 3px solid var(--brand-accent); margin-right: 22px; flex-shrink: 0;
+            }
+            #system-header .brand-info { display: flex; flex-direction: column; }
+            #system-header .founder { font-size: 30px; font-weight: 800; color: #fff; line-height: 1.2; }
+            #system-header .handle { font-size: 22px; color: var(--brand-accent); font-weight: 600; margin-top: 4px; }
 
-            /* LÕI HỆ THỐNG: NÚT CTA */
+            /* LÕI HỆ THỐNG: NÚT CTA (bottom) */
             #system-cta {
-                position: absolute; bottom: 250px; left: 50%; transform: translateX(-50%);
+                position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%);
                 background: var(--brand-accent); color: #000;
-                padding: 20px 40px; border-radius: 50px; font-size: 35px; font-weight: 900;
+                padding: 20px 50px; border-radius: 50px; font-size: 35px; font-weight: 900;
                 box-shadow: 0 15px 30px rgba(0,0,0,0.5); z-index: 10000; display: flex;
+                white-space: nowrap;
             }
         </style>
         ${metadata.styles}
@@ -144,14 +182,14 @@ async function renderBrollEngine(htmlPath) {
         </main>
         
         <!-- THÀNH PHẦN HỆ THỐNG ÉP BUỘC -->
-        <div id="system-cta">👇 Đọc Caption ngay!</div>
-        <div id="system-watermark">
-            <img class="avatar" src="${avatarBase64}"> 
+        <div id="system-header">
+            <img class="avatar" src="${avatarBase64}">
             <div class="brand-info">
                 <span class="founder">${founderName}</span>
                 <span class="handle">${brandHandle}</span>
             </div>
         </div>
+        <div id="system-cta">👇 Đọc Caption ngay!</div>
     </body>
     </html>
     `;
@@ -159,7 +197,25 @@ async function renderBrollEngine(htmlPath) {
     const renderPage = await browser.newPage();
     await renderPage.setViewport({ width: 1080, height: 1920, deviceScaleFactor: 1 });
     await renderPage.setContent(baseWrappedHtml, { waitUntil: 'networkidle0' });
-    
+
+    // Inject vault images (url_screenshot, image_stock, etc.)
+    if (resolvedImgData.length > 0) {
+        await renderPage.evaluate((imgInjections) => {
+            imgInjections.forEach(img => {
+                var el = document.querySelector('[data-inj-id="' + img.id + '"]');
+                if (el && img.base64) {
+                    if (el.tagName.toLowerCase() === 'img') {
+                        el.src = img.base64;
+                    } else {
+                        el.style.backgroundImage = "url('" + img.base64 + "')";
+                        el.style.backgroundSize = 'cover';
+                        el.style.backgroundPosition = 'center';
+                    }
+                }
+            });
+        }, resolvedImgData);
+    }
+
     // Tẩy nền
     await renderPage.evaluate(() => {
         document.body.style.backgroundColor = 'transparent';
@@ -169,26 +225,24 @@ async function renderBrollEngine(htmlPath) {
     const overlayBasePng = path.join(outputDir, 'overlay_base.png');
     const overlayCtaPng = path.join(outputDir, 'overlay_cta.png');
 
-    // 📸 CHỤP NHỊP 1: KÍNH NỀN BASE (Sản phẩm AI tạo ra + Watermark, Giấu CTA của hệ thống)
+    // 📸 CHỤP NHỊP 1: KÍNH NỀN BASE (Content AI + Header Brand, giấu CTA)
     await renderPage.evaluate(() => {
-        const wm = document.getElementById('system-watermark');
-        if (wm) wm.style.display = 'flex';
+        const header = document.getElementById('system-header');
+        if (header) header.style.display = 'flex';
         const mainEl = document.querySelector('main');
         if (mainEl) mainEl.style.display = 'flex';
-        // Hide CTA
         const cta = document.getElementById('system-cta');
         if (cta) cta.style.display = 'none';
     });
     await renderPage.screenshot({ path: overlayBasePng, omitBackground: true });
-    console.log(`[B-Roll Engine] Nhịp 1: Đã chụp Kính nền Base (Sáng tạo AI + Watermark)`);
+    console.log(`[B-Roll Engine] Nhịp 1: Đã chụp Kính nền Base (Content AI + Header Brand)`);
 
-    // 📸 CHỤP NHỊP 2: KÍNH CTA (Tắt hết, chỉ Bất tử CTA)
+    // 📸 CHỤP NHỊP 2: KÍNH CTA (Tắt hết, chỉ hiện CTA)
     await renderPage.evaluate(() => {
-        const wm = document.getElementById('system-watermark');
-        if (wm) wm.style.display = 'none';
+        const header = document.getElementById('system-header');
+        if (header) header.style.display = 'none';
         const mainEl = document.querySelector('main');
         if (mainEl) mainEl.style.display = 'none';
-        // Show CTA
         const cta = document.getElementById('system-cta');
         if (cta) cta.style.display = 'flex';
     });

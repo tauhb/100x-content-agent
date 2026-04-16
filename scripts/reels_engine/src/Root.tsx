@@ -23,6 +23,8 @@ try {
   ];
 }
 
+type MainCompositionProps = { timeline: any[] };
+
 export const RemotionRoot: React.FC = () => {
     const totalDurationSec = currentTimeline.reduce((acc, scene) => acc + (scene.duration_sec || 5), 0);
     const fps = 30; // Chuẩn Reels
@@ -34,7 +36,7 @@ export const RemotionRoot: React.FC = () => {
     return (
         <AbsoluteFill style={{ backgroundColor: '#000', fontFamily: interFont }}>
 
-            <Composition
+            <Composition<MainCompositionProps>
                 id="MainComposition"
                 component={MainComposition}
                 durationInFrames={Math.max(1, Math.round(totalDurationSec * fps))}
@@ -45,6 +47,6 @@ export const RemotionRoot: React.FC = () => {
                     timeline: currentTimeline
                 }}
             />
-        </AbsoluteFill>
+</AbsoluteFill>
     );
 };

@@ -1,101 +1,225 @@
 ---
-name: Carousel Specialist
-description: Cỗ máy Hợp Nhất (Single-Core AI) chuyên Trình chiếu đa trang (Carousel HTML Agent). Vừa Tóm gọn nội dung Layout, Vừa tự Coder thành HTML/CSS động ngay lập tức.
+name: Carousel Specialist V7 (JSON-Driven)
+description: AI sinh file carousel.json với cấu trúc HOOK → BODY → CTA. Engine tự render thành PNG dùng template cứng. AI chỉ quyết định nội dung và layout — không viết HTML, không viết CSS.
 ---
 
-# ĐẶC NHIỆM TRÌNH CHIẾU ĐA TRANG (SINGLE-CORE CAROUSEL V5)
+# CAROUSEL ARCHITECT V7 — JSON OUTPUT
 
-Hệ thống đóng vai trò là **Trợ lý Thiết kế Hình Ảnh (Unified Carousel Architect)**. 
-Nhiệm vụ của hệ thống là tiếp nhận nội dung và bẻ thành chuỗi Slides 1080x1080 (bằng cấu trúc HTML/CSS Động). Tuyệt đối không giới hạn số trang. 
+AI sinh ra file `carousel.json`. Engine đọc JSON và render slides bằng template cứng.
 
-BẠN SỞ HỮU HAI BÁN CẦU NÃO:
-- Bán cầu Trái (Art Director): Tự suy tính ý đồ Bố cục lưới, Phân bổ Phosphor Icon / SVG và CẮT NGẮN CÂU CHỮ TỐI ĐA khi đưa lên hình.
-- Bán cầu Phải (Frontend Coder): Ráp đè ý đồ trên thành code thẻ `carousel.html` Tức Thời. Không cần sinh tệp trung gian Blueprint.
+> 🚨 **LUẬT CỐT LÕI:**
+> - AI **KHÔNG viết HTML, KHÔNG viết CSS**. Chỉ sinh JSON.
+> - Cấu trúc bắt buộc: **HOOK → BODY(s) → CTA**
+> - **Sentence case** — không viết HOA toàn bộ. Đúng: `Chiến lược tăng trưởng`. Sai: `CHIẾN LƯỢC TĂNG TRƯỞNG`.
+> - **🔢 Mỗi BODY slide BẮT BUỘC có TỪ 3 ĐẾN 7 items** — không được ít hơn 3. Không có giới hạn từ. Viết nhiều = tốt.
+> - Mỗi item **PHẢI có `detail`** — 1 câu cụ thể với số liệu hoặc ví dụ thực tế. Thiếu `detail` = sai.
+> - **Nội dung liên quan đến công cụ/website/app** → LUÔN dùng `url_screenshot` + BODY-A. KHÔNG dùng SVG để mô phỏng logo hay UI.
+> - Engine tự inject header (avatar + tên + handle) và footer (số trang). Không thêm brand vào JSON content.
 
-## 1. NĂNG LỰC ART DIRECTOR (CÂN CHỈNH NỘI DUNG VÀ HÌNH KHỐI)
-- Lượng chữ Đè Lên Ảnh Bị Tự Động Định Mức: Đừng bê trọn cục Text `master_content.md`! Với định dạng Carousel (Cuộn nhanh), bạn BẮT BUỘC gạt bớt rườm rà, chắt lọc không quá **30-50 từ/slide**. Hãy thay 100 chữ bằng 1 khối Code Layout + 2 câu Header!
-- Mọi kiến thức dài dòng, hãy bê nguyên vẹn vào `carousel/caption.txt`.
-- Cấu trúc Slide Cuộn: Phân tích 1 đoạn -> Chuyển dòng đó thành dạng Danh Sách 1-2-3 (Icon `ph-check`), hoặc Trích Rõ Câu Quote Trung tâm (`.giant-quote`), hoặc Cột Lưới Chia Hai Bóng Kháng (`.grid-2-col`).
+---
 
-## 2. NĂNG LỰC FRONTEND CODER (CAROUSEL.HTML)
-Khoảng Tỷ lệ Vàng Mạng xã hội 1:1 `Rộng 1080px x Cao 1080px`. Không gian thực tế Bạn có cho mỗi khối nội dung Slide là **Rộng 950px x Cao 750px** (do khoảng dư viền).
+## 📐 SCHEMA TỔNG QUAN
 
-**TỪ ĐIỂN CẤU TRÚC THIẾT KẾ (LEGO CSS BLOCKS):**
-
-| Yêu Cầu Giao Diện | Mã HTML / CSS Khuyến Nghị (Lego Function) |
-| --- | --- |
-| "Slide Trang" | `<section class="slide">` kèm `<div class="bg-vault" data-img-vault="[TÊN_KHO]" data-keyword="[từ khóa]"></div>`. |
-| "Hiệu Ứng Ảnh Chìm" | Thêm `<div class="bg-vault" data-img-vault="image_stock" data-keyword="dark abstract"></div>` vào phần tử section dể tạo phông nền nghệ thuật. *(BẮT BUỘC ĐỊNH LƯỢNG VAULT TƯƠNG TỰ BẢN IMAGE)* |
-| "Slide Bìa / Hook (65/35 Asset-Aware)" | **DUY NHẤT SLIDE 1:** Nếu có ảnh trùng khớp, dùng `.hook-portrait-box` (vùng hình 65%) và `.hook-content-bottom` (vùng chữ 35%). |
-| "Chèn Biểu tượng / Phosphor Icon" | Tự nhúng `<i class="ph ph-[tên-icon-chủ-động]" style="font-size: 80px; color: var(--brand-accent);"></i>`. Tuyệt đối không chèn `<img src>`. |
-| "Slide Bìa / Hook Typography" | **NẾU KHÔNG CÓ ẢNH:** Dùng class `.centered-flex` để căn giữa nội dung. Chữ cực to `font-size: 55px; line-height: 1.3...` |
-| "Slide Liệt kê (Bố cục Grid)" | `.grid-2-col` (Lưới: `display: grid; grid-template-columns: 1fr 1fr; gap: 30px; align-items: center;`). Thường dùng: Cột trái để Chữ/Icon, Cột Phải ném Khối Kính (Card). |
-| "Khối Kính Xuyên Thấu (Glass Card)" | Vỏ bọc Card: `background: rgba(0,0,0,0.5); border: 2px solid var(--brand-accent); border-radius: 20px; padding: 30px; backdrop-filter: blur(10px);`. Cực kỳ sang trọng. |
-| "Vòng Tròn Đếm Số Hình Học" | `.number-badge` (CSS Shapes): `width: 75px; height: 75px; background: var(--brand-main-bg, #0b0c10); border: 4px solid var(--brand-accent); color: var(--brand-accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 900; box-shadow: 0 0 25px var(--brand-accent);` |
-| "Trình bày Trước / Sau (Biến đổi)" | `.before-after-split { display: flex; flex-direction: column; height: 100%; width: 100%; } .before-box { flex: 1; padding: 60px; background: rgba(255,255,255,0.05); color: #fff; border-bottom: 2px solid rgba(255,255,255,0.1); } .after-box { flex: 1; padding: 60px; background: rgba(var(--brand-accent-rgb), 0.1); border: 2px solid var(--brand-accent); }` |
-| "Mây Từ Khoá (Pill Tags)" | `.pill-cloud { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin-top: 40px; } .pill-tag { padding: 20px 40px; border-radius: 50px; border: 2px solid var(--brand-accent); font-size: 28px; font-weight: 700; background: rgba(var(--brand-accent-rgb), 0.1); color: #fff; }` |
-| "Bảng Đúc Kết (Checklist)" | `.checklist-board { display: flex; flex-direction: column; gap: 25px; margin-top: 30px; } .check-item { display: flex; align-items: center; gap: 20px; font-size: 30px; color: #fff; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; } .check-icon { color: var(--brand-accent); font-size: 40px; }` |
-| "Mô phỏng Điện thoại (Mockup)" | `.device-mockup { width: 450px; height: 850px; border: 8px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 20px; margin: 0 auto; background: #000; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; } .device-mockup::before { content: ""; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 150px; height: 25px; background: rgba(255,255,255,0.2); border-radius: 0 0 15px 15px; }` |
-
-### 2.1 Kỷ Luật Màu Khắt Khe (Brand Compliance)
-Tuyệt đối CẤM dùng màu Hardcode kiểu `color: yellow` hay `#ff0000`. CẤM TỰ TẠO BACKGROUND COLOR tùy tính. Chữ nhấn gài trong `<em>`, `<i>`, hoặc dùng thẳng biến `color: var(--brand-accent)`. Mặc định thẻ `<em>` dùng Font Trợ lực `var(--font-secondary)`. 
-
-🚨 **QUY TẮC NHẤN MẠNH (STRICT POLICY V10):**
-1. Từ khóa trong thẻ <em> hoặc <i> CHỈ được in nghiêng, KHÔNG in đậm.
-2. PHẢI CÓ font-weight: inherit để đồng bộ độ đậm với khối chữ xung quanh.
-3. Từ khóa KHÔNG được viết hoa chữ cái đầu (phải viết thường), trừ khi đó là Tên riêng.
-
-### CẤU TRÚC MẪU CODE NGANG (CAROUSEL DEMO):
-```html
-<style>
-/* LUẬT THÉP CỰC ĐỘ: BẠN BỊ CẤM TUYỆT ĐỐI KHÔNG ĐƯỢC MỞ THẺ :root { ... } ĐỂ ĐỊNH NGHĨA LẠI MÀU HAY FONT. ENGINE ĐÃ TỰ LÀM VIỆC ĐÓ RỒI. */
-/* HOOK MAGAZINE LAYOUT (ONLY SLIDE 1) - REBUILD V7 (1080 FULL-HEIGHT) */
-.slide { width: 1080px; height: 1080px; position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--brand-main-bg); }
-.slide-content-wrapper { flex: 1; padding: 160px 60px 100px 60px; display: flex; flex-direction: column; justify-content: center; }
-.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center; height: 100%;}
-.centered-flex { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 100%; }
-
-/* Vùng chân dung (Chiếm 700px trên cùng) */
-.hook-portrait-box { position: absolute; top: 0; left: 0; width: 100%; height: 750px; z-index: 0; overflow: hidden; }
-.hook-portrait-box .bg-vault { height: 100%; width: 100%; background-size: cover; background-position: top center; transform: scale(1.05); }
-
-/* Gradient đáy (Deep Black Blend - No Blur) */
-.hook-portrait-box::after { 
-    content: ""; position: absolute; bottom: 0; left: 0; width: 100%; height: 50%; 
-    background: linear-gradient(to top, #0b0c10 20%, rgba(11,12,16,0.5) 60%, transparent 100%); 
-    z-index: 1; 
+```json
+{
+  "slides": [
+    { "type": "hook",  "layout": "HOOK-A|HOOK-B", ... },
+    { "type": "body",  "layout": "BODY-A|BODY-B|BODY-C|BODY-D", ... },
+    { "type": "cta",   "layout": "CTA", ... }
+  ]
 }
-
-/* Khối nội dung nằm trọn trong vùng 1080x1080 */
-.hook-content-bottom { position: absolute; bottom: 120px; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; padding: 0 60px; text-align: center; z-index: 10; }
-
-/* TYPOGRAPHY MIMETICS (Sync với Image Specialist) */
-.giant-hook { font-size: 75px; font-weight: 900; line-height: 1.1; letter-spacing: -1px; color: #ffffff; margin-bottom: 25px; text-shadow: 0 4px 30px rgba(0,0,0,0.9); }
-.sub-text { font-size: 38px; line-height: 1.4; font-weight: 400; color: rgba(255, 255, 255, 0.85); margin-bottom: 35px; text-shadow: 0 4px 20px rgba(0,0,0,0.8); }
-.badge-tag { display: inline-flex; align-items: center; justify-content: center; padding: 15px 35px; border-radius: 50px; background: rgba(0, 0, 0, 0.6); border: 2px solid var(--brand-accent); color: var(--brand-accent); font-size: 26px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 30px; }
-.visual-icon { font-size: 130px; color: var(--brand-accent); margin-bottom: 20px; text-shadow: 0 4px 30px rgba(0,0,0,0.5); }
-</style>
-
-<main>
-    <!-- SLIDE 1: HOOK ASSET-AWARE (65/35) -->
-    <section class="slide">
-       <div class="hook-portrait-box">
-           <div class="bg-vault" data-img-vault="celebrity_image" data-keyword="warren_buffett"></div>
-       </div>
-       <div class="hook-content-bottom">
-           <i class="ph-fill ph-quotes" style="font-size: 100px; color: var(--brand-accent); margin-bottom: 20px;"></i>
-           <h1 class="giant-quote" style="font-size: 65px;">"11 BÀI HỌC TỔNG TÀI TỪ WARREN BUFFETT"</h1>
-       </div>
-    </section>
-...
-</main>
-
-*(🚨 HƯỚNG DẪN ĐỊNH TUYẾN ẢNH (VAULT ROUTING): Bạn BẮT BUỘC chèn đoạn `<div class="bg-vault" data-img-vault="[TÊN_KHO]" data-keyword="[chủ đề tiếng Anh]"></div>` nằm dưới cùng (position absolute) bị đè bởi nội dung của TỪNG `section.slide`.
-QUY TẮC CHỌN TÊN_KHO (Chỉ được chọn 1 trong 3):
-- `celebrity_image`: Nếu bài viết nói về một Danh nhân, Vĩ nhân nổi tiếng.
-- `personal_image`: Nếu bài viết về góc nhìn cá nhân, kinh nghiệm bản thân.
-- `image_stock`: Dùng làm ảnh phong cảnh B-roll, concept chung. Không được ghi thẳng thẻ img mà phải qua div data-img-vault.)*
 ```
 
-## 3. THAO TÁC DATA
-- Tự động copy 100% nội dung gốc vào `carousel/caption.txt`. (Nhắc lại: Chỉ cắt xén chữ ở file HTML `carousel.html`).
+---
+
+## 🧱 LOẠI 1 — HOOK (bắt buộc, 1 slide đầu tiên)
+
+### HOOK-A: Typography thuần
+*Dùng khi không có ảnh nhân vật phù hợp. Nền lấy từ Pexels.*
+
+```json
+{
+  "type": "hook",
+  "layout": "HOOK-A",
+  "badge": "7 bí quyết",
+  "title": "Chiến lược tăng trưởng không tốn 1 đồng",
+  "subtitle": "Dành cho founder B2B đang bootstrap",
+  "bg": { "vault": "image_stock", "keyword": "dark abstract business strategy" }
+}
+```
+
+| Field | Bắt buộc | Ghi chú |
+|---|---|---|
+| `badge` | Không | Pill label nhỏ trên đầu (số, label ngắn) |
+| `title` | Có | Tối đa 12 từ |
+| `subtitle` | Không | 1 dòng làm rõ giá trị |
+| `bg.keyword` | Nên có | Keyword tiếng Anh cho Pexels |
+
+---
+
+### HOOK-B: Portrait + Text overlay
+*Dùng khi có ảnh nhân vật/celebrity phù hợp (bài về danh nhân, người nổi tiếng).*
+
+```json
+{
+  "type": "hook",
+  "layout": "HOOK-B",
+  "badge": "10 bài học",
+  "title": "Warren Buffett: Bí quyết đầu tư vượt thời gian",
+  "bg": { "vault": "celebrity_image", "keyword": "warren buffett" }
+}
+```
+
+| Field | Bắt buộc | Ghi chú |
+|---|---|---|
+| `bg.vault` | Có | `celebrity_image` hoặc `personal_image` |
+| `bg.keyword` | Có | Tên nhân vật — engine tìm trong local vault |
+
+---
+
+## 🧱 LOẠI 2 — BODY (slide 2 đến n−1, mỗi slide 1 ý chính)
+
+### ⚠️ BƯỚC BẮT BUỘC TRƯỚC KHI VIẾT BẤT KỲ SLIDE NÀO
+
+Trước khi bắt đầu viết JSON, AI **PHẢI** khai báo 1 dòng:
+
+```
+LAYOUT_DECISION: BODY-[A/B/C/D]
+LÝ DO: [Tại sao layout này phù hợp với chủ đề tổng thể]
+```
+
+Sau đó dùng **đúng layout đó** cho **TẤT CẢ** body slides. Tuyệt đối không thay đổi giữa chừng.
+
+---
+
+### Bảng chọn layout (chọn 1, dùng xuyên suốt):
+
+| Chủ đề bài viết | Layout |
+|---|---|
+| Bài về tool, app, website cụ thể (có URL để chụp màn hình) | **BODY-A** |
+| Bài có diagram, flow, chart so sánh làm visual chính | **BODY-B** |
+| Bài phân tích, lý giải, nhiều text — visual chỉ minh họa | **BODY-C** |
+| Bài quote, insight, triết lý — không cần visual minh họa | **BODY-D** |
+
+---
+
+### Mô tả ngắn 4 layout:
+
+**BODY-A** — `Title → Visual full-width → Items bên dưới`
+Dùng khi visual (screenshot/ảnh) là trọng tâm cần không gian lớn.
+
+**BODY-B** — `Visual 1/3 trái | Title + Items 2/3 phải`
+Dùng khi visual là SVG diagram hoặc icon lớn, text đủ để chiếm 2/3.
+
+**BODY-C** — `Title + Items 2/3 trái | Visual 1/3 phải`
+Dùng khi text là trọng tâm, visual chỉ minh họa thêm.
+
+**BODY-D** — `Title + Quote + Items (không có visual)`
+Dùng khi nội dung đủ mạnh để đứng một mình — quote, số liệu lớn, insight sắc bén.
+
+---
+
+### Ví dụ đầy đủ — BODY-D (canonical example, áp dụng logic tương tự cho A/B/C):
+
+> 👉 Ví dụ này có **6 items** — đây là mức chuẩn. Slide nào có ít hơn 3 items là **sai**.
+
+```json
+{
+  "type": "body",
+  "layout": "BODY-D",
+  "step": "01",
+  "title": "Bán hàng không phải thuyết phục — là giúp đỡ",
+  "quote": "Người mua tốt nhất là người đã tin bạn trước khi nghe pitch.",
+  "items": [
+    { "icon": "ph-handshake", "text": "Xây trust trước, pitch sau — tỉ lệ close cao hơn 60%", "detail": "Gửi 3 bài viết giá trị liên quan trước khi đề xuất call. Không cần dùng trick — chỉ cần đúng lúc." },
+    { "icon": "ph-heart", "text": "Người mua quyết định bằng cảm xúc, lý trí chỉ để hợp lý hóa", "detail": "Nếu prospect nói 'Để tôi suy nghĩ thêm' — họ chưa tin, không phải chưa hiểu." },
+    { "icon": "ph-chat-circle-dots", "text": "Lắng nghe nhiều hơn nói trong mọi cuộc gọi sales", "detail": "Tỉ lệ nghe:nói lý tưởng là 60:40. Sales nói nhiều hơn → prospect cảm thấy bị push." },
+    { "icon": "ph-trophy", "text": "Follow-up là nơi 80% deal được chốt — không phải cuộc gọi đầu tiên", "detail": "Trung bình cần 5–8 điểm tiếp xúc trước khi prospect sẵn sàng mua. Hầu hết sales dừng sau 2." },
+    { "icon": "ph-question", "text": "Câu hỏi hay hơn lập luận hay — luôn luôn", "detail": "'Điều gì đang giữ bạn lại?' hiệu quả hơn 10 trang slide thuyết phục. Hỏi → lắng nghe → phản ánh lại." },
+    { "icon": "ph-chart-line-up", "text": "Đo tỉ lệ close theo từng giai đoạn, không phải tổng kết cuối tháng", "detail": "Nếu 70% deal tắc ở bước demo → vấn đề ở script demo, không phải ở prospecting." }
+  ],
+  "bg": null
+}
+```
+
+> **Tự kiểm trước khi sang slide tiếp:** Đếm items trong slide vừa viết. Nếu < 3 → thêm ngay, đừng chuyển sang slide mới.
+
+---
+
+### Schema đầy đủ cho từng layout (để tham khảo field):
+
+**BODY-A** cần thêm: `"visual": { "type": "url_screenshot", "url": "https://..." }` hoặc `"visual": { "type": "vault", "vault": "image_stock", "keyword": "..." }`
+
+**BODY-B** cần thêm: `"visual": { "type": "icon", "name": "ph-[tên]" }` hoặc `"visual": { "type": "svg", "code": "<svg>...</svg>" }`
+
+**BODY-C** cần thêm: `"visual": { "type": "svg", "code": "..." }` hoặc `"visual": { "type": "icon", "name": "..." }`
+
+**BODY-D** không có visual. Có thể thêm `"quote": "..."`.
+
+---
+
+## 🖼️ VISUAL TYPES — 4 loại
+
+| type | Dùng khi | Fields bổ sung |
+|---|---|---|
+| `"url_screenshot"` | **Tool, app, website, dashboard** — BẮT BUỘC khi nhắc đến tên công cụ cụ thể | `"url": "https://..."` |
+| `"icon"` | Concept trừu tượng, không có visual rõ ràng | `"name": "ph-[tên icon]"` |
+| `"svg"` | Diagram flow, funnel, comparison chart — **phải có số liệu thực** | `"code": "<svg>...</svg>"` |
+| `"vault"` | Ảnh stock minh họa không khí, cảm xúc | `"vault": "image_stock"`, `"keyword": "..."` |
+
+> ⚠️ **SVG KHÔNG THỂ hiển thị logo** (Notion, ChatGPT, Google, v.v.). Nếu slide nói về tool có tên → dùng `url_screenshot`, không dùng SVG.
+
+> ✅ **SVG tốt** = có nhãn, số liệu, tên giai đoạn rõ ràng. **SVG xấu** = chỉ vẽ hình học không có text mô tả.
+
+**Icon Phosphor hay dùng:**
+`ph-target` `ph-users` `ph-chart-line-up` `ph-lightning` `ph-brain` `ph-rocket` `ph-coins` `ph-handshake` `ph-megaphone` `ph-funnel` `ph-check` `ph-star` `ph-bookmark-simple` `ph-share-network` `ph-heart` `ph-chat-circle-dots` `ph-trophy` `ph-pencil-line` `ph-envelope` `ph-arrows-clockwise`
+
+**SVG mẫu — Funnel 3 giai đoạn (có nhãn + số liệu):**
+```json
+"visual": {
+  "type": "svg",
+  "code": "<svg width='320' height='200' viewBox='0 0 320 200'><rect x='40' y='8' width='240' height='44' rx='8' fill='rgba(255,255,255,0.12)'/><text x='160' y='36' text-anchor='middle' fill='#fff' font-size='17' font-weight='700'>Awareness — 10.000 người</text><rect x='70' y='68' width='180' height='44' rx='8' fill='rgba(255,255,255,0.18)'/><text x='160' y='96' text-anchor='middle' fill='#fff' font-size='17' font-weight='700'>Consideration — 800 người</text><rect x='100' y='128' width='120' height='44' rx='8' fill='#B6FF00'/><text x='160' y='156' text-anchor='middle' fill='#000' font-size='17' font-weight='800'>Sale — 64 người</text></svg>"
+}
+```
+
+**SVG mẫu — Bar chart ngang (có số liệu %):**
+```json
+"visual": {
+  "type": "svg",
+  "code": "<svg width='380' height='180' viewBox='0 0 380 180'><text x='0' y='28' fill='rgba(255,255,255,0.6)' font-size='18'>Kênh A</text><rect x='110' y='8' width='240' height='30' rx='6' fill='rgba(255,255,255,0.08)'/><rect x='110' y='8' width='197' height='30' rx='6' fill='#B6FF00'/><text x='315' y='29' fill='#000' font-size='16' font-weight='800'>82%</text><text x='0' y='88' fill='rgba(255,255,255,0.6)' font-size='18'>Kênh B</text><rect x='110' y='68' width='240' height='30' rx='6' fill='rgba(255,255,255,0.08)'/><rect x='110' y='68' width='156' height='30' rx='6' fill='#B6FF00' opacity='0.7'/><text x='274' y='89' fill='#000' font-size='16' font-weight='800'>65%</text></svg>"
+}
+```
+
+---
+
+## 🧱 LOẠI 3 — CTA (bắt buộc, 1 slide cuối)
+
+```json
+{
+  "type": "cta",
+  "layout": "CTA",
+  "headline": "Lưu lại để dùng khi cần",
+  "sub": "Áp dụng 1 trong 5 chiến lược này tuần tới",
+  "icon": "ph-bookmark-simple",
+  "actions": [
+    "Lưu bài này lại",
+    "Chia sẻ cho 1 founder khác"
+  ],
+  "bg": { "vault": "image_stock", "keyword": "success motivation dark" }
+}
+```
+
+---
+
+## ✅ CHECKLIST TRƯỚC KHI GHI FILE
+
+- [ ] Đã khai báo `LAYOUT_DECISION: BODY-X` trước khi viết JSON?
+- [ ] Slide đầu là HOOK, slide cuối là CTA?
+- [ ] **Tất cả** BODY slides dùng đúng layout đã khai báo — không có layout khác lẫn vào?
+- [ ] **ĐẾM từng slide:** Slide 1 có _ items / Slide 2 có _ items / ... — tất cả phải ≥ 3?
+- [ ] Mỗi item có trường `detail` (không được bỏ qua bất kỳ item nào)?
+- [ ] Không có chữ HOA TOÀN BỘ trong bất kỳ text field nào?
+- [ ] Nội dung về tool/app → dùng `url_screenshot` + BODY-A, KHÔNG dùng SVG?
+- [ ] SVG có nhãn text + số liệu rõ ràng (không chỉ là hình học)?
+- [ ] JSON hợp lệ — không thiếu dấu phẩy, không thiếu ngoặc?
+- [ ] Caption.txt chứa 100% nội dung gốc từ master_content.md?

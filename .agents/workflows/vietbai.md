@@ -1,13 +1,17 @@
 ---
-description: Lệnh kích hoạt Trợ lý Sáng tạo Nhãn quan (Brain) - Chuyên gia Biên Tập Viết ra văn bản gốc nguyên bản (Master Content) làm cơ sở cho mọi Định dạng xuất bản phương tiện.
+description: Viết Master Content độc lập — dùng khi muốn đọc và chỉnh sửa nội dung TRƯỚC khi tạo media. Các lệnh /tao_video, /tao_carousel, /tao_anh đã tự viết master_content nếu chưa có — không cần /vietbai trước đó.
 ---
+
+// turbo-all
 
 # Lệnh: /vietbai
 
-> [!IMPORTANT]
-> **ANTI-PLANNING DIRECTIVE:** Đây là một chuỗi hành động Tự Động (Automation) tuyến tính. AI bắt buộc thực thi ngay lập tức qua Run Command / Viết File, tuyệt đối KHÔNG ĐƯỢC vào chế độ Planning Mode và KHÔNG TẠO/SỬA file Implementation Plan. Không yêu cầu người dùng xác nhận kế hoạch.
-
-**Mục tiêu (V3 Specialist):** Kích hoạt hệ sinh thái làm việc của Trợ lý Biên Tập nội dung nhằm phát triển nền móng cấu trúc cho **Master Content** (Nội dung Nguồn). Được định vị như Lõi Dữ Liệu Tối Cao của quy trình vòng lặp bao gồm toàn bộ Hệ giá trị Insight, Thông tin Fact, và dữ kiện Phát triển Câu Chuyện. Đầu ra này sẽ được tái xử dụng trên toàn bộ mảng Hình/Slide/Phim động (Image/Carousel/Reels) của hệ hệ sinh thái để loại bỏ nguy cơ chênh lệch định hướng ngôn ngữ (Tone).
+> **Khi nào dùng lệnh này:**
+> - Muốn **review và chỉnh sửa** bài viết trước khi chạy media
+> - Muốn tạo **bài đăng text thuần** không kèm media
+> - Dùng quy trình 2 bước: viết → kiểm duyệt trên Sheets → rồi mới `/tao_video`
+>
+> **Khi nào KHÔNG cần:** Nếu anh gọi thẳng `/tao_video [chủ đề]` — lệnh đó tự viết master_content rồi chạy luôn.
 
 > ⚠️ **LUẬT THÉP KHÔNG GIA TĂNG TỆP RÁC (ZERO-GARBAGE):**
 Tuyệt đối KHÔNG sử dụng phân bổ file lưu trữ nháp tại đường dẫn `/tmp/`. Mọi hồ sơ liên kết đối với chung quy dữ kiện đều yêu cầu lưu trữ cấu trúc ổn định bên trong Thư mục Nguồn: `media_output/[YYYY-MM-DD]/[Kênh]/[Ticket_ID]/`.
@@ -19,14 +23,10 @@ Tuyệt đối KHÔNG sử dụng phân bổ file lưu trữ nháp tại đườ
 ### Bước 1: Khởi tạo Dữ liệu Nền tảng (Pre-requisite)
 - Khảo sát đầu vào từ khóa nguồn qua đề xuất của Quản trị viên, hoặc thông qua kho dự trữ thông tin nội hàm `database/idea_bank.json`.
 - Truy xuất chuỗi giá trị Cột mốc Thời gian (`YYYY-MM-DD`), thuộc tính Kênh nền tảng tương tác, đồng thời phát sinh mã ID danh mục quy định tiêu chuẩn (`post_...`).
-- Tham chiếu giá trị định hướng thương hiệu từ `database/brand_config.json`.
+- Tham chiếu giá trị định hướng thương hiệu từ `database/my_accounts.json` (account có `"active": true`).
 
 ### Bước 2: Hiệu lệnh Triệu tập Trợ Lý Biên Tập (Master Content)
-- Tải ngay bộ Kỹ năng Văn phong tại tệp: `skills/copywriter.md`.
-- Phát triển kịch bản văn xuôi dài hướng đích **Long Form (Dung lượng 800-2000 từ vựng)** tuân thủ NGHIÊM NGẶT Công thức 7 phần STORY ADS:
-  - **LƯU Ý CỰC KỲ QUAN TRỌNG:** Thành phẩm là MỘT BÀI VIẾT LONG-FORM HOÀN CHỈNH, ĐỌC MƯỢT MÀ TỪ ĐẦU ĐẾN CUỐI (Tối ưu cho định dạng Ảnh + Text). TUYỆT ĐỐI KHÔNG ĐƯỢC CHÈN CÁC TIÊU ĐỀ CÔNG THỨC MÁY MÓC (ví dụ cấm dùng: `## 1. Core Insight`). 
-  - Các yếu tố chiến lược (Hook, Facts, Story, CTA) vẫn phải có đầy đủ, nhưng phải được AI **HÒA QUYỆN NGẦM** vào văn phong kể chuyện tự nhiên mượt mà.
-  - Chỉ được dùng Markdown Heading (`##`) cho các tiêu đề nội dung thật sự của bài viết.
+- Tải ngay bộ Kỹ năng Văn phong tại tệp: `skills/copywriter.md` và tuân thủ NGHIÊM NGẶT mọi chỉ dẫn trong đó — không tự đặt ra quy tắc hay công thức nào khác ngoài những gì skill quy định.
 - Khởi tạo giá trị thuộc tính định mức `visual_hook_core` (Câu Thông Nạp Tiềm Năng Hiệu Suất Cao Nhất).
 
 - 🚨 **KHỞI TẠO TIỀN TRẠM (MANDATORY):** Để đảm bảo không bao giờ lỗi "File not found", hệ thống thực hiện tạo sẵn rễ thư mục:

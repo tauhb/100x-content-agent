@@ -8,7 +8,7 @@ description: Khởi động Xưởng Đúc Ảnh Danh Nhân - Đề xuất Danh 
 ## Quy trình Thực thi
 
 ### Bước 1: Trí tuệ Đề xuất (Brainstorming)
-- Đọc `database/brand_config.json` để đồng bộ Vibe thẩm mỹ.
+- Đọc `database/my_accounts.json`, tìm account có `"active": true`, lấy `brand_identity.visual_vibe` để đồng bộ Vibe thẩm mỹ.
 - Đề xuất **10 Tên Danh Nhân, Doanh Nhân Tỷ Phú nổi tiếng toàn cầu** (VD: Elon Musk, Marcus Aurelius, Steve Jobs, Naval Ravikant). Đi kèm là 1-2 concept chụp tương ứng cho từng người.
 - In danh sách ra chờ User phản hồi chọn nhân vật.
 

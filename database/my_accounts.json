@@ -1,41 +1,66 @@
 {
-  "channels": [
+  "accounts": [
     {
-      "name": "Facebook",
-      "posting_schedule": [
-        { "time": "8h30",  "content_type": "carousel",     "vibe": "motivational" },
-        { "time": "11h30", "content_type": "image",         "vibe": "tips" },
-        { "time": "15h30", "content_type": "video_broll",   "vibe": "educational" },
-        { "time": "19h30", "content_type": "infographic",   "vibe": "storytelling" }
-      ]
-    },
-    {
-      "name": "TikTok",
-      "posting_schedule": [
-        { "time": "7h00",  "content_type": "video_broll",   "vibe": "hook" },
-        { "time": "12h00", "content_type": "video_broll",   "vibe": "tips" },
-        { "time": "20h00", "content_type": "video",         "vibe": "entertainment" }
-      ]
-    },
-    {
-      "name": "YouTube Shorts",
-      "posting_schedule": [
-        { "time": "9h00",  "content_type": "video",         "vibe": "educational" },
-        { "time": "18h00", "content_type": "video",         "vibe": "motivational" }
-      ]
-    },
-    {
-      "name": "Instagram Reels",
-      "posting_schedule": [
-        { "time": "8h00",  "content_type": "video_broll",   "vibe": "motivational" },
-        { "time": "19h00", "content_type": "carousel",      "vibe": "tips" }
-      ]
-    },
-    {
-      "name": "LinkedIn",
-      "posting_schedule": [
-        { "time": "8h00",  "content_type": "image",         "vibe": "professional" },
-        { "time": "12h00", "content_type": "infographic",   "vibe": "educational" }
+      "id": "rainmaker",
+      "active": true,
+      "founder": "Hoàng Bá Tầu",
+      "brand_identity": {
+        "handle": "@rainmaker",
+        "colors": {
+          "accent": "#B6FF00"
+        },
+        "fonts": {
+          "primary": "Inter",
+          "accent": "Playfair Display"
+        },
+        "visual_vibe": "Cinematic lighting, high contrast, dark mode, sharp focus, professional and luxurious mood. Color palette predominantly dark.",
+        "watermark": {
+          "enabled": false,
+          "text": "100X",
+          "logo_url": "file:///path/to/logo.png",
+          "bottom_margin": "20px",
+          "opacity": 0.5
+        }
+      },
+      "channels": [
+        {
+          "name": "Facebook",
+          "posting_schedule": [
+            { "time": "8h30",  "content_type": "carousel",     "vibe": "motivational" },
+            { "time": "11h30", "content_type": "image",         "vibe": "tips" },
+            { "time": "15h30", "content_type": "video_broll",   "vibe": "educational" },
+            { "time": "19h30", "content_type": "infographic",   "vibe": "storytelling" }
+          ]
+        },
+        {
+          "name": "TikTok",
+          "posting_schedule": [
+            { "time": "7h00",  "content_type": "video_broll",   "vibe": "hook" },
+            { "time": "12h00", "content_type": "video_broll",   "vibe": "tips" },
+            { "time": "20h00", "content_type": "video",         "vibe": "entertainment" }
+          ]
+        },
+        {
+          "name": "YouTube Shorts",
+          "posting_schedule": [
+            { "time": "9h00",  "content_type": "video",         "vibe": "educational" },
+            { "time": "18h00", "content_type": "video",         "vibe": "motivational" }
+          ]
+        },
+        {
+          "name": "Instagram Reels",
+          "posting_schedule": [
+            { "time": "8h00",  "content_type": "video_broll",   "vibe": "motivational" },
+            { "time": "19h00", "content_type": "carousel",      "vibe": "tips" }
+          ]
+        },
+        {
+          "name": "LinkedIn",
+          "posting_schedule": [
+            { "time": "8h00",  "content_type": "image",         "vibe": "professional" },
+            { "time": "12h00", "content_type": "infographic",   "vibe": "educational" }
+          ]
+        }
       ]
     }
   ]
